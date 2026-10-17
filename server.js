@@ -231,6 +231,8 @@ app.post('/api/collection/verify-razorpay', async (req, res) => {
 
 // Start Server
 app.listen(PORT, () => {
+  const supabaseClient = require('./supabaseClient');
   console.log(`🚀 Money Collection Platform running on http://localhost:${PORT}`);
-  console.log(`📁 Database: Stored securely in database.json (no public ledgers)`);
+  console.log(`📁 Local Database: database.json`);
+  console.log(`☁️ Supabase PostgreSQL: ${supabaseClient.isSupabaseConfigured() ? 'Connected & Syncing' : 'Ready (set SUPABASE_URL & SUPABASE_ANON_KEY in .env)'}`);
 });

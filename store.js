@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const supabaseClient = require('./supabaseClient');
 
 const DB_FILE = path.join(__dirname, 'database.json');
 
@@ -42,6 +43,12 @@ function saveTransaction(txn) {
     db.transactions.unshift(txn);
   }
   writeDb(db);
+
+  // Asynchronously sync to Supabase Cloud PostgreSQL
+  supabaseClient.syncToSupabase(txn).catch(err => {
+    console.warn('[Store] Supabase background sync notice:', err.message);
+  });
+
   return txn;
 }
 
