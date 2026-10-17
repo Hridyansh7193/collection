@@ -29,6 +29,9 @@ CREATE INDEX IF NOT EXISTS idx_payments_group ON payments(group_id);
 CREATE INDEX IF NOT EXISTS idx_payments_status ON payments(status);
 CREATE INDEX IF NOT EXISTS idx_payments_created ON payments(created_at DESC);
 
+-- Enable full read/write access for collection transactions
+ALTER TABLE payments DISABLE ROW LEVEL SECURITY;
+
 -- View for group-by-group summary
 CREATE OR REPLACE VIEW group_collection_summary AS
 SELECT 
