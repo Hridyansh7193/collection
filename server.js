@@ -229,10 +229,21 @@ app.post('/api/collection/verify-razorpay', async (req, res) => {
   }
 });
 
-// Start Server
-app.listen(PORT, () => {
-  const supabaseClient = require('./supabaseClient');
-  console.log(`🚀 Money Collection Platform running on http://localhost:${PORT}`);
-  console.log(`📁 Local Database: database.json`);
-  console.log(`☁️ Supabase PostgreSQL: ${supabaseClient.isSupabaseConfigured() ? 'Connected & Syncing' : 'Ready (set SUPABASE_URL & SUPABASE_ANON_KEY in .env)'}`);
+// Fallback route to serve frontend on all web requests
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api')) return next();
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
+
+// Start local server if not running as a Vercel Serverless Function
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    const supabaseClient = require('./supabaseClient');
+    console.log(`🚀 Money Collection Platform running on http://localhost:${PORT}`);
+    console.log(`📁 Local Database: database.json`);
+    console.log(`☁️ Supabase PostgreSQL: ${supabaseClient.isSupabaseConfigured() ? 'Connected & Syncing' : 'Ready (set SUPABASE_URL & SUPABASE_ANON_KEY in .env)'}`);
+  });
+}
+
+// Export for Vercel Serverless Function
+module.exports = app;
