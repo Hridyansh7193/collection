@@ -105,6 +105,11 @@ function generateReceiptHtml(txn) {
           <td class="label">Payment Method</td>
           <td class="value">${(txn.paymentMethod || 'UPI').toUpperCase()}</td>
         </tr>
+        ${txn.targetUpiId ? `
+        <tr>
+          <td class="label">Receiving QR Account</td>
+          <td class="value" style="font-family: monospace; font-size: 13px;">${txn.pairLabel || ('QR ' + txn.pairId)} (${txn.targetUpiId})</td>
+        </tr>` : ''}
         ${txn.razorpayPaymentId ? `
         <tr>
           <td class="label">Gateway Reference</td>

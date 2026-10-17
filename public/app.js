@@ -235,6 +235,11 @@
       qrDisplayEmail.textContent = currentTxn.payerEmail;
       qrDisplayRef.textContent = currentTxn.id;
 
+      const qrDisplayPair = document.getElementById('qr-display-pair');
+      const qrDisplayUpi = document.getElementById('qr-display-upi');
+      if (qrDisplayPair) qrDisplayPair.textContent = data.pairLabel || `QR ${data.pairId || 1}`;
+      if (qrDisplayUpi) qrDisplayUpi.textContent = data.targetUpiId || '';
+
       // Check Razorpay Button
       if (data.razorpayOrderId && data.razorpayKeyId && window.Razorpay) {
         btnRzpCheckout.style.display = 'inline-flex';

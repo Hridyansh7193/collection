@@ -1,6 +1,7 @@
 const Razorpay = require('razorpay');
 const QRCode = require('qrcode');
 const crypto = require('crypto');
+const { getGroupQrConfig } = require('./config');
 require('dotenv').config();
 
 function getRazorpayInstance() {
@@ -23,7 +24,7 @@ function isRazorpayConfigured() {
 
 function buildUpiString({ upiId, merchantName, amount, txnId, note }) {
   const cleanUpi = upiId || process.env.DEFAULT_UPI_ID || 'contribute@upi';
-  const cleanName = merchantName || process.env.DEFAULT_MERCHANT_NAME || 'Collection Drive';
+  const cleanName = merchantName || 'Contribution Drive';
   const cleanNote = note || `Contribution ${txnId}`;
   const formattedAmount = Number(amount).toFixed(2);
 
@@ -35,6 +36,11 @@ async function generatePaymentQr({ txnId, amount, groupId, groupName, note, paye
   let razorpayOrderId = null;
   let paymentProvider = 'upi';
 
+  // Retrieve the 5-QR configuration for this group
+  const qrPairConfig = getGroupQrConfig(groupId);
+  const targetUpiId = qrPairConfig ? qrPairConfig.upiId : (process.env.DEFAULT_UPI_ID || 'contribute@upi');
+  const targetMerchantName = qrPairConfig ? qrPairConfig.merchantName : `${groupName} Contribution`;
+
   if (rzp) {
     try {
       const amountPaise = Math.round(Number(amount) * 100);
@@ -44,6 +50,7 @@ async function generatePaymentQr({ txnId, amount, groupId, groupName, note, paye
         receipt: txnId,
         notes: {
           groupId,
+          pairId: qrPairConfig ? qrPairConfig.pairId : 1,
           payerEmail,
           payerName: payerName || '',
           note: note || ''
@@ -57,8 +64,8 @@ async function generatePaymentQr({ txnId, amount, groupId, groupName, note, paye
   }
 
   const upiString = buildUpiString({
-    upiId: process.env.DEFAULT_UPI_ID || 'contribute@upi',
-    merchantName: `${groupName} Contribution`,
+    upiId: targetUpiId,
+    merchantName: targetMerchantName,
     amount,
     txnId,
     note: `${groupId}: ${note || 'Contribution'}`
@@ -79,7 +86,12 @@ async function generatePaymentQr({ txnId, amount, groupId, groupName, note, paye
     qrPayload: upiString,
     paymentProvider,
     razorpayOrderId,
-    razorpayKeyId: process.env.RAZORPAY_KEY_ID || null
+    razorpayKeyId: process.env.RAZORPAY_KEY_ID || null,
+    pairId: qrPairConfig ? qrPairConfig.pairId : 1,
+    pairLabel: qrPairConfig ? qrPairConfig.label : 'QR',
+    targetUpiId,
+    hasCustomImage: qrPairConfig ? qrPairConfig.hasCustomImage : false,
+    customImageUrl: qrPairConfig ? qrPairConfig.customImageUrl : null
   };
 }
 

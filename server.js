@@ -102,6 +102,9 @@ app.post('/api/collection/create-qr', async (req, res) => {
       note: note ? note.trim() : '',
       status: 'pending',
       paymentMethod: qrResult.paymentProvider,
+      pairId: qrResult.pairId,
+      pairLabel: qrResult.pairLabel,
+      targetUpiId: qrResult.targetUpiId,
       razorpayOrderId: qrResult.razorpayOrderId,
       razorpayPaymentId: null,
       emailSent: false,
@@ -119,6 +122,11 @@ app.post('/api/collection/create-qr', async (req, res) => {
       transaction: newTxn,
       qrDataUrl: qrResult.qrDataUrl,
       qrPayload: qrResult.qrPayload,
+      pairId: qrResult.pairId,
+      pairLabel: qrResult.pairLabel,
+      targetUpiId: qrResult.targetUpiId,
+      hasCustomImage: qrResult.hasCustomImage,
+      customImageUrl: qrResult.customImageUrl,
       razorpayOrderId: qrResult.razorpayOrderId,
       razorpayKeyId: qrResult.razorpayKeyId
     });
