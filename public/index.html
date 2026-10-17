@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CollectPulse — Contribution Portal</title>
+  <!-- Google Fonts: Outfit & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Header / Navigation -->
+  <header class="app-header">
+    <div class="nav-container">
+      <div class="brand-area">
+        <div class="brand-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+            <line x1="2" y1="10" x2="22" y2="10"></line>
+            <circle cx="7" cy="15" r="1"></circle>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">CollectPulse</span>
+          <span class="brand-tag">Contribution Portal</span>
+        </div>
+      </div>
+
+      <div class="nav-controls">
+        <div class="active-group-badge" id="active-group-pill">
+          <span class="group-dot"></span>
+          <span id="active-group-text">Select Group to Unlock</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-wrapper">
+    <!-- Group Selector Section (Groups A through J) -->
+    <section class="group-selector-section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Select Your Group (A to J)</h2>
+          <p class="section-subtitle">Select your group and enter your group password to unlock the collection terminal.</p>
+        </div>
+      </div>
+
+      <div class="group-carousel" id="groups-container">
+        <!-- Rendered dynamically: Groups A through J -->
+      </div>
+    </section>
+
+    <!-- Collection Workspace: Two Column Layout -->
+    <div class="collection-layout">
+      <!-- Left Column: Collector Desk (Input Amount, Contributor Email) -->
+      <div class="collector-card">
+        <div class="card-header">
+          <div class="header-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+          </div>
+          <div>
+            <h3 class="card-title">Collector Terminal — <span id="form-group-title">Select Group</span></h3>
+            <p class="card-subtitle">Dial in contributor details and generate instant payment QR</p>
+          </div>
+        </div>
+
+        <form id="collection-form" class="collection-form">
+          <!-- Amount Input -->
+          <div class="form-group">
+            <label class="form-label" for="input-amount">
+              Contribution Amount (INR) <span class="required">*</span>
+            </label>
+            <div class="amount-input-wrapper">
+              <span class="currency-symbol">₹</span>
+              <input 
+                type="number" 
+                id="input-amount" 
+                class="amount-input" 
+                placeholder="500" 
+                min="1" 
+                step="any" 
+                required
+              />
+            </div>
+            <!-- Quick Denomination Pills -->
+            <div class="quick-amounts">
+              <button type="button" class="amount-pill" data-val="100">+ ₹100</button>
+              <button type="button" class="amount-pill" data-val="500">+ ₹500</button>
+              <button type="button" class="amount-pill" data-val="1000">+ ₹1,000</button>
+              <button type="button" class="amount-pill" data-val="2000">+ ₹2,000</button>
+              <button type="button" class="amount-pill" data-val="5000">+ ₹5,000</button>
+            </div>
+          </div>
+
+          <!-- Contributor Email (Dialed by Collector) -->
+          <div class="form-group highlight-box">
+            <label class="form-label" for="input-payer-email">
+              Contributor Email Address <span class="required">*</span>
+            </label>
+            <div class="input-with-icon">
+              <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+              <input 
+                type="email" 
+                id="input-payer-email" 
+                class="form-input" 
+                placeholder="contributor@example.com" 
+                required
+              />
+            </div>
+            <div class="form-hint">
+              <strong>Receipt Notice:</strong> An official confirmation email with the exact amount paid will be dispatched to this address upon payment.
+            </div>
+          </div>
+
+          <div class="form-row">
+            <!-- Contributor Name -->
+            <div class="form-group">
+              <label class="form-label" for="input-payer-name">Contributor Name</label>
+              <div class="input-with-icon">
+                <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                <input 
+                  type="text" 
+                  id="input-payer-name" 
+                  class="form-input" 
+                  placeholder="e.g. Rahul Sharma"
+                />
+              </div>
+            </div>
+
+            <!-- Contributor Phone -->
+            <div class="form-group">
+              <label class="form-label" for="input-payer-phone">Mobile / WhatsApp (Optional)</label>
+              <div class="input-with-icon">
+                <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                <input 
+                  type="tel" 
+                  id="input-payer-phone" 
+                  class="form-input" 
+                  placeholder="e.g. +91 98765 43210"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Note / Purpose -->
+          <div class="form-group">
+            <label class="form-label" for="input-note">Contribution Purpose / Remarks</label>
+            <input 
+              type="text" 
+              id="input-note" 
+              class="form-input" 
+              placeholder="e.g. Community Contribution / Event Fund"
+              value="Contribution"
+            />
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" id="btn-generate-qr" class="btn btn-primary btn-block btn-lg">
+            <span class="btn-icon">⚡</span>
+            <span>Generate Payment QR Code</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Right Column: QR Code Terminal & Confirmation Display -->
+      <div class="terminal-card" id="terminal-container">
+        <!-- Initial Idle State -->
+        <div class="terminal-state active" id="state-idle">
+          <div class="idle-illustration">
+            <div class="qr-placeholder-glow">
+              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+                <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                <line x1="17" y1="7" x2="17.01" y2="7"></line>
+                <line x1="7" y1="17" x2="7.01" y2="17"></line>
+              </svg>
+            </div>
+          </div>
+          <h3 class="terminal-idle-title">Ready for Next Contribution</h3>
+          <p class="terminal-idle-desc">
+            Feed the amount and contributor email on the left, then click <strong>"Generate Payment QR Code"</strong>.
+          </p>
+          <div class="group-lock-status" id="idle-status-tag">
+            <span class="secure-icon">🔒</span> Select and unlock your group to begin
+          </div>
+        </div>
+
+        <!-- Active QR State -->
+        <div class="terminal-state" id="state-qr">
+          <div class="qr-header-bar">
+            <div class="qr-status-live">
+              <span class="pulse-dot"></span> Awaiting Scan & Payment
+            </div>
+            <div class="qr-group-badge" id="qr-display-group">Group A</div>
+          </div>
+
+          <!-- Dynamic QR Image Card -->
+          <div class="qr-card">
+            <div class="qr-frame">
+              <img id="qr-image" src="" alt="Scan QR Code to Pay" class="qr-img" />
+              <div class="qr-scan-guide">Scan with any UPI App (GPay, PhonePe, Paytm, BHIM)</div>
+            </div>
+
+            <div class="qr-payment-info">
+              <div class="qr-amount-display" id="qr-display-amount">₹0.00</div>
+              <div class="qr-contributor-tag">
+                Contributor: <strong id="qr-display-contributor"></strong>
+              </div>
+              <div class="qr-email-tag">
+                Confirmation Email: <strong id="qr-display-email"></strong>
+              </div>
+              <div class="qr-ref-code">Ref: <span id="qr-display-ref"></span></div>
+            </div>
+          </div>
+
+          <!-- Actions & Simulation -->
+          <div class="qr-actions">
+            <!-- Simulated Payment (for instant testing of the real email) -->
+            <button id="btn-simulate-pay" class="btn btn-accent btn-block" title="Confirms payment and dispatches the confirmation email">
+              <span class="btn-icon">🚀</span>
+              <span>Simulate Successful Payment (Triggers Real Email)</span>
+            </button>
+
+            <div class="actions-secondary">
+              <!-- Razorpay Checkout Button (if keys present) -->
+              <button id="btn-rzp-checkout" class="btn btn-secondary btn-sm" style="display: none;">
+                💳 Open Razorpay Checkout
+              </button>
+
+              <!-- Manual Confirm -->
+              <button id="btn-manual-confirm" class="btn btn-secondary btn-sm">
+                ✓ Collector Manual Confirm
+              </button>
+
+              <!-- Cancel / New -->
+              <button id="btn-cancel-qr" class="btn btn-ghost btn-sm">
+                ✕ Cancel & Clear
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Success & Receipt State -->
+        <div class="terminal-state" id="state-success">
+          <div class="success-animation">
+            <div class="checkmark-circle">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+          </div>
+
+          <h3 class="success-title">Contribution Confirmed!</h3>
+          <div class="success-amount" id="success-display-amount">₹0.00</div>
+          <p class="success-subtitle" id="success-group-tag">Successfully credited</p>
+
+          <!-- Email Dispatch Status Box -->
+          <div class="email-status-card" id="email-status-box">
+            <div class="email-icon-row">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+              <span id="email-status-headline">Confirmation Email Status</span>
+            </div>
+            <div class="email-status-details" id="email-status-details">
+              Processing confirmation receipt...
+            </div>
+          </div>
+
+          <!-- Transaction Summary Details -->
+          <div class="receipt-mini-summary">
+            <div class="summary-row">
+              <span>Receipt Ref ID:</span>
+              <strong id="success-ref-id"></strong>
+            </div>
+            <div class="summary-row">
+              <span>Contributor:</span>
+              <strong id="success-payer-name"></strong>
+            </div>
+            <div class="summary-row">
+              <span>Contributor Email:</span>
+              <strong id="success-payer-email"></strong>
+            </div>
+            <div class="summary-row">
+              <span>Completed At:</span>
+              <strong id="success-timestamp"></strong>
+            </div>
+          </div>
+
+          <div class="success-actions">
+            <button id="btn-new-collection" class="btn btn-primary btn-block">
+              + Collect Another Contribution
+            </button>
+            <button id="btn-print-receipt" class="btn btn-secondary btn-block">
+              🖨️ Print / Save Receipt
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Group Password Unlock Modal -->
+  <div class="modal-backdrop" id="modal-group-auth">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-badge" id="modal-group-badge">Group Authentication</div>
+        <h3 class="modal-title">Collector Authentication</h3>
+        <p class="modal-subtitle">Enter the password for this group provided by the admin.</p>
+      </div>
+
+      <form id="group-auth-form" class="modal-form">
+        <input type="hidden" id="auth-target-group-id" value="">
+        <div class="form-group">
+          <label class="form-label" for="auth-group-password">Group Password</label>
+          <div class="input-with-icon">
+            <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <input 
+              type="password" 
+              id="auth-group-password" 
+              class="form-input" 
+              placeholder="Enter password..." 
+              required
+              autocomplete="current-password"
+            />
+          </div>
+        </div>
+
+        <div id="auth-error-msg" class="alert-box error" style="display: none;"></div>
+
+        <div class="modal-actions">
+          <button type="button" id="btn-cancel-auth" class="btn btn-secondary">Cancel</button>
+          <button type="submit" class="btn btn-primary">Unlock Group</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Razorpay Checkout Script (Optional, for card/netbanking checkout if keys set) -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

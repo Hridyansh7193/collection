@@ -1,0 +1,22 @@
+{
+  "name": "collection",
+  "version": "1.0.0",
+  "description": "Multi-group money collection platform with QR payment gateway and automated email confirmation",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": ["collection", "upi", "razorpay", "nodemailer", "qr-code"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "nodemailer": "^6.9.13",
+    "qrcode": "^1.5.3",
+    "razorpay": "^2.9.4",
+    "uuid": "^9.0.1"
+  }
+}
