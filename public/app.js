@@ -16,11 +16,15 @@
   const inputPayerEmail = document.getElementById('input-payer-email');
   const inputPayerName = document.getElementById('input-payer-name');
   const inputPayerPhone = document.getElementById('input-payer-phone');
+  const selectDepartment = document.getElementById('select-department');
+  const departmentHint = document.getElementById('department-hint');
   const selectRole = document.getElementById('select-role');
   const roleMinBadge = document.getElementById('role-min-badge');
   const roleMinBadgeText = document.getElementById('role-min-badge-text');
   const roleMinIndicator = document.getElementById('role-min-indicator');
+  const qrDisplayDepartment = document.getElementById('qr-display-department');
   const qrDisplayRole = document.getElementById('qr-display-role');
+  const successDepartment = document.getElementById('success-department');
   const successRole = document.getElementById('success-role');
   const amountPills = document.querySelectorAll('.amount-pill');
   const btnGenerateQr = document.getElementById('btn-generate-qr');
@@ -179,6 +183,21 @@
     formGroupTitle.textContent = g.name;
     idleStatusTag.innerHTML = `<span class="secure-icon">🔓</span> Authenticated for Group ${g.id} &bull; <small style="color: #cbd5e1;">${g.departments || ''}</small>`;
 
+    // Dynamically populate Department Dropdown for selected group
+    if (selectDepartment) {
+      const deptList = g.departmentList || (g.departments ? g.departments.split(',').map(s => s.trim()) : []);
+      selectDepartment.innerHTML = `<option value="" disabled selected>-- Select Department for Group ${g.id} --</option>`;
+      deptList.forEach(dept => {
+        const opt = document.createElement('option');
+        opt.value = dept;
+        opt.textContent = dept;
+        selectDepartment.appendChild(opt);
+      });
+      if (departmentHint) {
+        departmentHint.textContent = `Available in Group ${g.id}: ${deptList.join(', ')}`;
+      }
+    }
+
     renderGroupCards();
 
     if (currentTxn && currentTxn.groupId !== groupId) {
@@ -192,6 +211,13 @@
 
     if (!activeGroupId || !unlockedGroups[activeGroupId]) {
       showToast('Please select and unlock your group with your group password first!', 'warning');
+      return;
+    }
+
+    const selectedDepartment = selectDepartment ? selectDepartment.value : '';
+    if (!selectedDepartment) {
+      showToast(`Please select a Department from Group ${activeGroupId}`, 'warning');
+      if (selectDepartment) selectDepartment.focus();
       return;
     }
 
@@ -238,6 +264,7 @@
           groupId: activeGroupId,
           password,
           amount,
+          department: selectedDepartment,
           payerEmail,
           payerName,
           payerPhone,
@@ -296,6 +323,7 @@
       qrDisplayGroup.textContent = `Group ${currentTxn.groupId}`;
       qrDisplayAmount.textContent = formatMoney(currentTxn.amount);
       qrDisplayContributor.textContent = currentTxn.payerName || 'Anonymous';
+      if (qrDisplayDepartment) qrDisplayDepartment.textContent = currentTxn.department || selectedDepartment;
       if (qrDisplayRole) qrDisplayRole.textContent = currentTxn.role || currentTxn.note || selectedRole;
       qrDisplayEmail.textContent = currentTxn.payerEmail;
       qrDisplayRef.textContent = currentTxn.id;
@@ -470,6 +498,7 @@
     successGroupTag.textContent = `Successfully credited to Group ${txn.groupId}`;
     successRefId.textContent = txn.id;
     successPayerName.textContent = txn.payerName || 'Anonymous';
+    if (successDepartment) successDepartment.textContent = txn.department || 'N/A';
     if (successRole) successRole.textContent = txn.role || txn.note || 'Contributor';
     successPayerEmail.textContent = txn.payerEmail;
     successTimestamp.textContent = new Date(txn.completedAt || Date.now()).toLocaleString('en-IN');
@@ -495,6 +524,21 @@
   btnNewCollection.addEventListener('click', () => {
     collectionForm.reset();
     if (selectRole) selectRole.value = '';
+    if (selectDepartment) {
+      if (activeGroupId) {
+        const g = groups.find(x => x.id === activeGroupId);
+        const deptList = g ? (g.departmentList || (g.departments ? g.departments.split(',').map(s => s.trim()) : [])) : [];
+        selectDepartment.innerHTML = `<option value="" disabled selected>-- Select Department for Group ${activeGroupId} --</option>`;
+        deptList.forEach(dept => {
+          const opt = document.createElement('option');
+          opt.value = dept;
+          opt.textContent = dept;
+          selectDepartment.appendChild(opt);
+        });
+      } else {
+        selectDepartment.innerHTML = `<option value="" disabled selected>-- Select Department --</option>`;
+      }
+    }
     if (roleMinBadge) roleMinBadge.style.display = 'none';
     if (roleMinIndicator) roleMinIndicator.textContent = '';
     inputAmount.value = '';

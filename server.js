@@ -68,7 +68,7 @@ const ROLE_MINIMUMS = {
 // 3. Create QR Code for Contribution
 app.post('/api/collection/create-qr', async (req, res) => {
   try {
-    const { groupId, password, amount, payerName, payerEmail, payerPhone, role } = req.body;
+    const { groupId, password, amount, payerName, payerEmail, payerPhone, role, department } = req.body;
 
     if (!groupId || !password) {
       return res.status(401).json({ success: false, message: 'Group authentication required.' });
@@ -76,6 +76,15 @@ app.post('/api/collection/create-qr', async (req, res) => {
 
     if (!validateGroupPassword(groupId, password)) {
       return res.status(401).json({ success: false, message: 'Invalid group password.' });
+    }
+
+    const group = getGroup(groupId);
+    if (!group) {
+      return res.status(404).json({ success: false, message: 'Group not found.' });
+    }
+
+    if (!department) {
+      return res.status(400).json({ success: false, message: 'Please select a Medical Department from the dropdown.' });
     }
 
     if (!role || !ROLE_MINIMUMS[role]) {
@@ -98,7 +107,6 @@ app.post('/api/collection/create-qr', async (req, res) => {
       return res.status(400).json({ success: false, message: 'A valid contributor email address is required for sending the confirmation.' });
     }
 
-    const group = getGroup(groupId);
     const txnId = generateTxnId(group.id);
 
     const qrResult = await paymentService.generatePaymentQr({
@@ -106,7 +114,7 @@ app.post('/api/collection/create-qr', async (req, res) => {
       amount: numericAmount,
       groupId: group.id,
       groupName: group.name,
-      note: `${role} Contribution`,
+      note: `${department.trim()} - ${role}`,
       payerName: payerName || '',
       payerEmail: payerEmail.trim()
     });
@@ -116,11 +124,12 @@ app.post('/api/collection/create-qr', async (req, res) => {
       groupId: group.id,
       groupName: group.name,
       amount: numericAmount,
+      department: department.trim(),
       role: role,
       payerName: payerName ? payerName.trim() : 'Anonymous Contributor',
       payerEmail: payerEmail.trim(),
       payerPhone: payerPhone ? payerPhone.trim() : '',
-      note: role,
+      note: `${department.trim()} | ${role}`,
       status: 'pending',
       paymentMethod: qrResult.paymentProvider,
       pairId: qrResult.pairId,

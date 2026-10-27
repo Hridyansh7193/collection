@@ -8,6 +8,7 @@ const GROUPS = [
     id: 'A', 
     name: 'Group A (Medicine, Microbiology, ENT)', 
     departments: 'Medicine, Microbiology, ENT',
+    departmentList: ['Medicine', 'Microbiology', 'ENT'],
     pairId: 1, 
     defaultPassword: process.env.GROUP_A_PASS || 'alpha@groupA', 
     color: '#6366f1' 
@@ -16,6 +17,7 @@ const GROUPS = [
     id: 'B', 
     name: 'Group B (Community Medicine, Forensic Medicine, Pharmacology)', 
     departments: 'Community Medicine, Forensic Medicine, Pharmacology',
+    departmentList: ['Community Medicine', 'Forensic Medicine', 'Pharmacology'],
     pairId: 1, 
     defaultPassword: process.env.GROUP_B_PASS || 'bravo@groupB', 
     color: '#ec4899' 
@@ -24,6 +26,7 @@ const GROUPS = [
     id: 'C', 
     name: 'Group C (Obstetrics & Gynaecology, Radiology)', 
     departments: 'Obstetrics & Gynaecology, Radiology',
+    departmentList: ['Obstetrics & Gynaecology', 'Radiology'],
     pairId: 2, 
     defaultPassword: process.env.GROUP_C_PASS || 'charlie@groupC', 
     color: '#10b981' 
@@ -32,6 +35,7 @@ const GROUPS = [
     id: 'D', 
     name: 'Group D (Anatomy, Biochemistry, Physiology)', 
     departments: 'Anatomy, Biochemistry, Physiology',
+    departmentList: ['Anatomy', 'Biochemistry', 'Physiology'],
     pairId: 2, 
     defaultPassword: process.env.GROUP_D_PASS || 'delta@groupD', 
     color: '#f59e0b' 
@@ -40,6 +44,7 @@ const GROUPS = [
     id: 'E', 
     name: 'Group E (State Cancer Institute, Emergency Medicine)', 
     departments: 'State Cancer Institute, Emergency Medicine',
+    departmentList: ['State Cancer Institute', 'Emergency Medicine'],
     pairId: 3, 
     defaultPassword: process.env.GROUP_E_PASS || 'echo@groupE', 
     color: '#8b5cf6' 
@@ -48,6 +53,7 @@ const GROUPS = [
     id: 'F', 
     name: 'Group F (Dermatology, Critical Care Medicine, Psychiatry)', 
     departments: 'Dermatology, Critical Care Medicine, Psychiatry',
+    departmentList: ['Dermatology', 'Critical Care Medicine', 'Psychiatry'],
     pairId: 3, 
     defaultPassword: process.env.GROUP_F_PASS || 'foxtrot@groupF', 
     color: '#06b6d4' 
@@ -56,6 +62,7 @@ const GROUPS = [
     id: 'G', 
     name: 'Group G (Orthopaedics, General Surgery, RIO)', 
     departments: 'Orthopaedics, General Surgery, RIO',
+    departmentList: ['Orthopaedics', 'General Surgery', 'RIO'],
     pairId: 4, 
     defaultPassword: process.env.GROUP_G_PASS || 'golf@groupG', 
     color: '#14b8a6' 
@@ -64,6 +71,7 @@ const GROUPS = [
     id: 'H', 
     name: 'Group H (Pulmonary Medicine, Dental, PMR, Nephrology)', 
     departments: 'Pulmonary Medicine, Dental, PMR, Nephrology',
+    departmentList: ['Pulmonary Medicine', 'Dental', 'PMR', 'Nephrology'],
     pairId: 4, 
     defaultPassword: process.env.GROUP_H_PASS || 'hotel@groupH', 
     color: '#f97316' 
@@ -72,6 +80,7 @@ const GROUPS = [
     id: 'I', 
     name: 'Group I (Pathology, Pediatrics Medicine, Pediatric Surgery, CTVS)', 
     departments: 'Pathology, Pediatrics Medicine, Pediatric Surgery, CTVS',
+    departmentList: ['Pathology', 'Pediatrics Medicine', 'Pediatric Surgery', 'CTVS'],
     pairId: 5, 
     defaultPassword: process.env.GROUP_I_PASS || 'india@groupI', 
     color: '#3b82f6' 
@@ -80,6 +89,7 @@ const GROUPS = [
     id: 'J', 
     name: 'Group J (Anaesthesia, Neuromedicine, Neurosurgery)', 
     departments: 'Anaesthesia, Neuromedicine, Neurosurgery',
+    departmentList: ['Anaesthesia', 'Neuromedicine', 'Neurosurgery'],
     pairId: 5, 
     defaultPassword: process.env.GROUP_J_PASS || 'juliet@groupJ', 
     color: '#ef4444' 
@@ -88,6 +98,7 @@ const GROUPS = [
     id: 'K', 
     name: 'Group K (Gastromedicine, Gastrosurgery, Reproductive Medicine)', 
     departments: 'Gastromedicine, Gastrosurgery, Reproductive Medicine',
+    departmentList: ['Gastromedicine', 'Gastrosurgery', 'Reproductive Medicine'],
     pairId: 6, 
     defaultPassword: process.env.GROUP_K_PASS || 'kilo@groupK', 
     color: '#0ea5e9' 
@@ -96,6 +107,7 @@ const GROUPS = [
     id: 'L', 
     name: 'Group L (Cardiology, Urology, Endocrinology)', 
     departments: 'Cardiology, Urology, Endocrinology',
+    departmentList: ['Cardiology', 'Urology', 'Endocrinology'],
     pairId: 6, 
     defaultPassword: process.env.GROUP_L_PASS || 'lima@groupL', 
     color: '#d946ef' 
@@ -212,6 +224,7 @@ function getSafeGroupsList() {
       id: g.id,
       name: g.name,
       departments: g.departments,
+      departmentList: g.departmentList || g.departments.split(',').map(s => s.trim()),
       color: g.color,
       pairId: g.pairId,
       qrLabel: qrInfo ? qrInfo.label : `QR ${g.pairId}`

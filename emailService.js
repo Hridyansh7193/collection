@@ -84,6 +84,11 @@ function generateReceiptHtml(txn) {
           <td class="label">Contribution Group</td>
           <td class="value" style="color: #6366f1;">Group ${txn.groupId}</td>
         </tr>
+        ${txn.department ? `
+        <tr>
+          <td class="label">Medical Department</td>
+          <td class="value" style="font-weight: 700; color: #4f46e5;">${txn.department}</td>
+        </tr>` : ''}
         <tr>
           <td class="label">Contributor Name</td>
           <td class="value">${txn.payerName || 'Generous Contributor'}</td>
@@ -172,6 +177,7 @@ CONTRIBUTION DETAILS:
 ------------------------------------------
 Receipt Ref ID:      ${txn.id}
 Contribution Group:  Group ${txn.groupId}
+Medical Department:  ${txn.department || 'N/A'}
 Designation / Role:  ${txn.role || txn.note || 'Contributor'}
 Contributor Name:    ${txn.payerName || 'Generous Contributor'}
 Amount Paid:         ${formattedAmount}

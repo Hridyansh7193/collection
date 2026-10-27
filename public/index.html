@@ -146,28 +146,47 @@
             </div>
           </div>
 
-          <!-- Designation / Role Dropdown -->
-          <div class="form-group">
-            <label class="form-label" for="select-role">
-              Designation / Role <span class="required">*</span>
-            </label>
-            <div class="input-with-icon">
-              <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>
-              <select id="select-role" class="form-input form-select" required>
-                <option value="" disabled selected>-- Select Designation / Role --</option>
-                <optgroup label="Professors (Minimum ₹2,000)">
-                  <option value="Associate Professor">Associate Professor (Min ₹2,000)</option>
-                  <option value="Additional Professor">Additional Professor (Min ₹2,000)</option>
-                </optgroup>
-                <optgroup label="Residents (Minimum ₹1,500)">
-                  <option value="Senior Resident">Senior Resident (Min ₹1,500)</option>
-                  <option value="Junior Resident">Junior Resident (Min ₹1,500)</option>
-                </optgroup>
-              </select>
+          <div class="form-row">
+            <!-- Medical Department Dropdown -->
+            <div class="form-group">
+              <label class="form-label" for="select-department">
+                Department <span class="required">*</span>
+              </label>
+              <div class="input-with-icon">
+                <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                <select id="select-department" class="form-input form-select" required>
+                  <option value="" disabled selected>-- Select Department --</option>
+                </select>
+              </div>
+              <div class="form-hint" id="department-hint">
+                Select and unlock a group to load departments
+              </div>
             </div>
-            <div id="role-min-badge" class="role-tier-badge" style="display: none; margin-top: 8px;">
-              <span id="role-min-badge-text"></span>
+
+            <!-- Designation / Role Dropdown -->
+            <div class="form-group">
+              <label class="form-label" for="select-role">
+                Designation / Role <span class="required">*</span>
+              </label>
+              <div class="input-with-icon">
+                <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>
+                <select id="select-role" class="form-input form-select" required>
+                  <option value="" disabled selected>-- Select Designation --</option>
+                  <optgroup label="Professors (Minimum ₹2,000)">
+                    <option value="Associate Professor">Associate Professor (Min ₹2,000)</option>
+                    <option value="Additional Professor">Additional Professor (Min ₹2,000)</option>
+                  </optgroup>
+                  <optgroup label="Residents (Minimum ₹1,500)">
+                    <option value="Senior Resident">Senior Resident (Min ₹1,500)</option>
+                    <option value="Junior Resident">Junior Resident (Min ₹1,500)</option>
+                  </optgroup>
+                </select>
+              </div>
             </div>
+          </div>
+
+          <div id="role-min-badge" class="role-tier-badge" style="display: none; margin-bottom: 20px;">
+            <span id="role-min-badge-text"></span>
           </div>
 
           <!-- Submit Button -->
@@ -227,6 +246,9 @@
               <div class="qr-amount-display" id="qr-display-amount">₹0.00</div>
               <div class="qr-contributor-tag">
                 Contributor: <strong id="qr-display-contributor"></strong>
+              </div>
+              <div class="qr-dept-tag" id="qr-dept-row" style="font-size: 0.85rem; color: #475569; margin-bottom: 2px;">
+                Department: <strong id="qr-display-department" style="color: #10b981;"></strong>
               </div>
               <div class="qr-role-tag" id="qr-role-row" style="font-size: 0.85rem; color: #475569; margin-bottom: 2px;">
                 Designation: <strong id="qr-display-role" style="color: #6366f1;"></strong>
@@ -301,6 +323,10 @@
             <div class="summary-row">
               <span>Contributor:</span>
               <strong id="success-payer-name"></strong>
+            </div>
+            <div class="summary-row">
+              <span>Department:</span>
+              <strong id="success-department" style="color: #10b981;"></strong>
             </div>
             <div class="summary-row">
               <span>Designation:</span>
