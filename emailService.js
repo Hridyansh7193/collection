@@ -43,41 +43,41 @@ function generateReceiptHtml(txn) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #0f172a; margin: 0; padding: 24px; color: #1e293b; }
-    .container { max-width: 580px; margin: 0 auto; background: #ffffff; border-radius: 18px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
-    .header { background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); padding: 36px 30px; text-align: center; color: #ffffff; }
-    .badge { display: inline-block; background: rgba(255,255,255,0.22); padding: 6px 14px; border-radius: 9999px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
-    .title { font-size: 24px; font-weight: 800; margin: 0; }
-    .amount-box { text-align: center; padding: 28px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; }
-    .amount-label { font-size: 13px; text-transform: uppercase; color: #64748b; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 4px; }
-    .amount-val { font-size: 42px; font-weight: 900; color: #4338ca; margin: 0; }
-    .status-pill { display: inline-block; background: #dcfce7; color: #15803d; font-size: 13px; font-weight: 700; padding: 5px 14px; border-radius: 20px; margin-top: 10px; }
-    .body-content { padding: 30px; }
+    .container { max-width: 580px; margin: 0 auto; background: #ffffff; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; }
+    .header { background: #4f46e5; padding: 32px 24px; text-align: center; color: #ffffff; }
+    .badge { display: inline-block; background: rgba(255,255,255,0.2); padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+    .title { font-size: 22px; font-weight: 800; margin: 0; }
+    .amount-box { text-align: center; padding: 24px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; }
+    .amount-label { font-size: 12px; text-transform: uppercase; color: #64748b; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 4px; }
+    .amount-val { font-size: 38px; font-weight: 800; color: #4338ca; margin: 0; }
+    .status-pill { display: inline-block; background: #dcfce7; color: #15803d; font-size: 13px; font-weight: 700; padding: 5px 14px; border-radius: 20px; margin-top: 8px; }
+    .body-content { padding: 26px; }
     .details-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    .details-table td { padding: 12px 0; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
+    .details-table td { padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
     .details-table td.label { color: #64748b; font-weight: 600; width: 40%; }
     .details-table td.value { color: #0f172a; font-weight: 700; text-align: right; }
-    .note-box { margin-top: 24px; padding: 16px; background: #f8fafc; border-left: 4px solid #6366f1; border-radius: 6px; font-size: 14px; color: #334155; }
-    .footer { padding: 24px 30px; background: #f8fafc; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; line-height: 1.5; }
+    .note-box { margin-top: 20px; padding: 14px; background: #f8fafc; border-left: 4px solid #6366f1; border-radius: 6px; font-size: 13px; color: #334155; }
+    .footer { padding: 20px 24px; background: #f8fafc; text-align: center; font-size: 12px; color: #64748b; border-top: 1px solid #e2e8f0; line-height: 1.6; }
   </style>
 </head>
-<body>
+<body style="background-color: #f1f5f9; margin: 0; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
   <div class="container">
     <div class="header">
-      <div class="badge">Official Contribution Receipt</div>
-      <h1 class="title">Payment Confirmation</h1>
-      <p style="margin: 8px 0 0; opacity: 0.9; font-size: 14px;">Thank you for your generous contribution</p>
+      <div class="badge">Official Receipt</div>
+      <h1 class="title">CEREBREXIA 2026 Confirmation</h1>
+      <p style="margin: 6px 0 0; opacity: 0.95; font-size: 14px;">Thank you for your contribution to Group ${txn.groupId}</p>
     </div>
 
     <div class="amount-box">
-      <div class="amount-label">Exact Amount Paid</div>
+      <div class="amount-label">Contribution Amount</div>
       <div class="amount-val">${formattedAmount}</div>
-      <div class="status-pill">&#10003; Payment Received & Confirmed</div>
+      <div class="status-pill">&#10003; Confirmed & Logged in Database</div>
     </div>
 
     <div class="body-content">
       <table class="details-table">
         <tr>
-          <td class="label">Receipt / Txn ID</td>
+          <td class="label">Receipt Reference ID</td>
           <td class="value" style="font-family: monospace; font-size: 13px; color: #4f46e5;">${txn.id}</td>
         </tr>
         <tr>
@@ -103,40 +103,25 @@ function generateReceiptHtml(txn) {
           <td class="value">${txn.payerPhone}</td>
         </tr>` : ''}
         <tr>
-          <td class="label">Payment Date & Time</td>
+          <td class="label">Date & Time</td>
           <td class="value">${dateStr}</td>
         </tr>
         <tr>
-          <td class="label">Payment Method</td>
-          <td class="value">${(txn.paymentMethod || 'UPI').toUpperCase()}</td>
+          <td class="label">Payment Status</td>
+          <td class="value" style="color: #16a34a;">Accepted & Verified</td>
         </tr>
-        ${txn.targetUpiId ? `
-        <tr>
-          <td class="label">Receiving QR Account</td>
-          <td class="value" style="font-family: monospace; font-size: 13px;">${txn.pairLabel || ('QR ' + txn.pairId)} (${txn.targetUpiId})</td>
-        </tr>` : ''}
-        ${txn.razorpayPaymentId ? `
-        <tr>
-          <td class="label">Gateway Reference</td>
-          <td class="value" style="font-family: monospace; font-size: 12px;">${txn.razorpayPaymentId}</td>
-        </tr>` : ''}
       </table>
 
-      ${txn.note ? `
-      <div class="note-box">
-        <strong>Remarks / Note:</strong><br/>
-        ${txn.note}
-      </div>` : ''}
-
-      <div style="margin-top: 26px; text-align: center; color: #475569; font-size: 14px; line-height: 1.6;">
+      <div style="margin-top: 22px; text-align: center; color: #475569; font-size: 13px; line-height: 1.5;">
         This email confirms receipt of your contribution of <strong>${formattedAmount}</strong> to <strong>Group ${txn.groupId}</strong>. 
-        Your payment has been officially verified and logged.
+        Your payment has been officially recorded in the CEREBREXIA 2026 database.
       </div>
     </div>
 
     <div class="footer">
-      This is an automated confirmation receipt sent to ${txn.payerEmail}.<br/>
-      Money Collection Platform &bull; Group ${txn.groupId}
+      This is an official automated receipt issued by <strong>CEREBREXIA 2026</strong>.<br/>
+      Official Contact: cerebrexia2026@gmail.com &bull; Group ${txn.groupId}<br/>
+      Please retain this confirmation for your records.
     </div>
   </div>
 </body>
@@ -147,6 +132,11 @@ function generateReceiptHtml(txn) {
 async function sendConfirmationEmail(txn) {
   const transporter = getTransporter();
   const formattedAmount = formatCurrency(txn.amount);
+  const dateStr = new Date(txn.completedAt || txn.createdAt || Date.now()).toLocaleString('en-IN', {
+    timeZone: 'Asia/Kolkata',
+    dateStyle: 'full',
+    timeStyle: 'medium'
+  });
 
   if (!transporter) {
     const errorMsg = 'Gmail credentials not configured in .env (GMAIL_USER and GMAIL_APP_PASSWORD required).';
@@ -165,8 +155,33 @@ async function sendConfirmationEmail(txn) {
   const mailOptions = {
     from: `"${senderName}" <${senderEmail}>`,
     to: txn.payerEmail,
-    subject: `Receipt: ${formattedAmount} received for Group ${txn.groupId} [${txn.id}]`,
-    text: `Payment Confirmation:\n\nThank you ${txn.payerName || 'Contributor'}!\n\nYour contribution of ${formattedAmount} for Group ${txn.groupId} has been confirmed.\nTransaction ID: ${txn.id}\nDate: ${new Date(txn.completedAt || Date.now()).toLocaleString()}`,
+    replyTo: senderEmail,
+    subject: `CEREBREXIA 2026 - Contribution Confirmation for Group ${txn.groupId}`,
+    headers: {
+      'X-Entity-Ref-ID': txn.id,
+      'Auto-Submitted': 'auto-generated',
+      'X-Auto-Response-Suppress': 'All'
+    },
+    text: `CEREBREXIA 2026 - CONTRIBUTION CONFIRMATION
+
+Dear ${txn.payerName || 'Contributor'},
+
+Thank you for your generous contribution to CEREBREXIA 2026. This receipt confirms that your payment has been accepted and recorded in the database.
+
+CONTRIBUTION DETAILS:
+------------------------------------------
+Receipt Ref ID:      ${txn.id}
+Contribution Group:  Group ${txn.groupId}
+Designation / Role:  ${txn.role || txn.note || 'Contributor'}
+Contributor Name:    ${txn.payerName || 'Generous Contributor'}
+Amount Paid:         ${formattedAmount}
+Payment Status:      Accepted & Verified
+Date & Time:         ${dateStr}
+------------------------------------------
+
+This is an automated confirmation issued by CEREBREXIA 2026 Organizing Committee.
+Contact: ${senderEmail}
+Please retain this email for your records.`,
     html: generateReceiptHtml(txn)
   };
 
