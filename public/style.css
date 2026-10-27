@@ -242,8 +242,8 @@ body {
 
 .group-carousel {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 14px;
 }
 
 .group-card {
@@ -633,11 +633,15 @@ body {
 }
 
 .qr-img {
-  width: 230px;
-  height: 230px;
+  max-width: 280px;
+  max-height: 280px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
   display: block;
   margin: 0 auto;
   border-radius: var(--radius-sm);
+  background: #ffffff;
 }
 
 .qr-scan-guide {

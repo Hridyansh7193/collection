@@ -19,6 +19,8 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/QR', express.static(path.join(__dirname, 'QR')));
+app.use('/qrs', express.static(path.join(__dirname, 'public', 'qrs')));
 
 function generateTxnId(groupId) {
   const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');

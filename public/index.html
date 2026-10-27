@@ -39,17 +39,17 @@
 
   <!-- Main Container -->
   <main class="main-wrapper">
-    <!-- Group Selector Section (Groups A through J) -->
+    <!-- Group Selector Section (Groups A through L) -->
     <section class="group-selector-section">
       <div class="section-header">
         <div>
-          <h2 class="section-title">Select Your Group (A to J)</h2>
+          <h2 class="section-title">Select Your Group (A to L)</h2>
           <p class="section-subtitle">Select your group and enter your group password to unlock the collection terminal.</p>
         </div>
       </div>
 
       <div class="group-carousel" id="groups-container">
-        <!-- Rendered dynamically: Groups A through J -->
+        <!-- Rendered dynamically: Groups A through L -->
       </div>
     </section>
 
@@ -204,7 +204,10 @@
           <div class="qr-card">
             <div class="qr-frame">
               <img id="qr-image" src="" alt="Scan QR Code to Pay" class="qr-img" />
-              <div class="qr-scan-guide">Scan with any UPI App (GPay, PhonePe, Paytm, BHIM)</div>
+              <div class="qr-scan-guide" id="qr-scan-guide-text">Scan with any UPI App (GPay, PhonePe, Paytm, BHIM)</div>
+              <button type="button" id="btn-toggle-qr-type" class="btn btn-secondary btn-sm" style="display: none; margin-top: 8px;">
+                🔄 Switch to Dynamic Amount QR
+              </button>
             </div>
 
             <div class="qr-payment-info">
@@ -214,6 +217,7 @@
               </div>
               <div class="qr-email-tag">
                 Confirmation Email: <strong id="qr-display-email"></strong>
+              </div>
               <div class="qr-pair-tag" style="font-size: 0.8rem; color: #475569; margin-bottom: 4px;">
                 Destination: <strong id="qr-display-pair" style="color: #6366f1;">QR 1</strong> &bull; <code id="qr-display-upi" style="font-family: monospace;">contribute@upi</code>
               </div>

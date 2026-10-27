@@ -10,8 +10,8 @@ A clean, full-stack money collection web platform with dynamic UPI/Razorpay QR c
    - Financial ledgers and transaction histories are **never exposed on the public website**.
    - All transactions (amounts, timestamps, contributor emails, group IDs, transaction references, payment statuses) are stored strictly inside the backend database (`database.json`).
 
-2. **Secret Group Passwords (Groups A through J)**:
-   - There are 10 distinct groups (**Group A to Group J**).
+2. **Secret Group Passwords (Groups A through L)**:
+   - There are 12 distinct groups (**Group A to Group L**).
    - Passwords are **never displayed on the website**.
    - The admin configures group passwords in `.env` and personally distributes the respective password to each group's collector.
    - A collector must select their group and enter the correct password to unlock the collection terminal.
@@ -104,6 +104,8 @@ GROUP_G_PASS=yourSecretG
 GROUP_H_PASS=yourSecretH
 GROUP_I_PASS=yourSecretI
 GROUP_J_PASS=yourSecretJ
+GROUP_K_PASS=yourSecretK
+GROUP_L_PASS=yourSecretL
 ```
 
 Send the respective password directly and privately to the collector for each group.

@@ -107,7 +107,7 @@
     }
   }
 
-  // 2. Render Groups A to J Cards
+  // 2. Render Groups A to L Cards
   function renderGroupCards() {
     groupsContainer.innerHTML = '';
 
@@ -122,7 +122,10 @@
         <div class="group-card-badge" style="background: ${g.color || '#6366f1'}33; border-color: ${g.color || '#6366f1'}">
           ${g.id}
         </div>
-        <div class="group-card-name">${g.name}</div>
+        <div class="group-card-name">Group ${g.id}</div>
+        <div class="group-card-depts" style="font-size: 0.72rem; color: #94a3b8; margin-top: 6px; line-height: 1.35; font-weight: 500;">
+          ${g.departments || g.name}
+        </div>
       `;
 
       card.addEventListener('click', () => {
@@ -146,8 +149,9 @@
   }
 
   function promptGroupPassword(targetId) {
+    const g = groups.find(x => x.id === targetId) || { id: targetId, name: `Group ${targetId}` };
     authTargetGroupId.value = targetId;
-    modalGroupBadge.textContent = `Group ${targetId}`;
+    modalGroupBadge.textContent = g.name;
     authGroupPassword.value = '';
     authErrorMsg.style.display = 'none';
     modalGroupAuth.classList.add('active');
@@ -158,9 +162,9 @@
     activeGroupId = groupId;
     const g = groups.find(x => x.id === groupId) || { id: groupId, name: `Group ${groupId}` };
 
-    activeGroupText.textContent = `${g.name} (Unlocked)`;
+    activeGroupText.textContent = `Group ${g.id} (Unlocked)`;
     formGroupTitle.textContent = g.name;
-    idleStatusTag.innerHTML = `<span class="secure-icon">🔓</span> Authenticated for Group ${g.id}`;
+    idleStatusTag.innerHTML = `<span class="secure-icon">🔓</span> Authenticated for Group ${g.id} &bull; <small style="color: #cbd5e1;">${g.departments || ''}</small>`;
 
     renderGroupCards();
 
@@ -228,7 +232,42 @@
       currentTxn = data.transaction;
 
       // Populate QR display
-      qrImage.src = data.qrDataUrl;
+      const btnToggleQrType = document.getElementById('btn-toggle-qr-type');
+      const qrScanGuideText = document.getElementById('qr-scan-guide-text');
+
+      let isShowingCustom = false;
+      if (data.hasCustomImage && data.customImageUrl) {
+        qrImage.src = data.customImageUrl;
+        isShowingCustom = true;
+        if (btnToggleQrType) {
+          btnToggleQrType.style.display = 'inline-flex';
+          btnToggleQrType.textContent = '🔄 Switch to Dynamic Amount QR';
+        }
+        if (qrScanGuideText) {
+          qrScanGuideText.textContent = 'Official Merchant Scanner (Enter amount in your UPI app)';
+        }
+      } else {
+        qrImage.src = data.qrDataUrl;
+        if (btnToggleQrType) btnToggleQrType.style.display = 'none';
+        if (qrScanGuideText) qrScanGuideText.textContent = 'Scan with any UPI App (Amount pre-filled)';
+      }
+
+      if (btnToggleQrType) {
+        btnToggleQrType.onclick = () => {
+          if (isShowingCustom) {
+            qrImage.src = data.qrDataUrl;
+            btnToggleQrType.textContent = '🔄 Switch to Official Merchant Scanner';
+            if (qrScanGuideText) qrScanGuideText.textContent = 'Dynamic QR (Exact amount pre-filled)';
+            isShowingCustom = false;
+          } else {
+            qrImage.src = data.customImageUrl;
+            btnToggleQrType.textContent = '🔄 Switch to Dynamic Amount QR';
+            if (qrScanGuideText) qrScanGuideText.textContent = 'Official Merchant Scanner (Enter amount in your UPI app)';
+            isShowingCustom = true;
+          }
+        };
+      }
+
       qrDisplayGroup.textContent = `Group ${currentTxn.groupId}`;
       qrDisplayAmount.textContent = formatMoney(currentTxn.amount);
       qrDisplayContributor.textContent = currentTxn.payerName || 'Anonymous';
@@ -250,7 +289,7 @@
 
       setTerminalState('qr');
       startPollingTxn(currentTxn.id);
-      showToast('Dynamic Payment QR Generated! Ready for payment.', 'success');
+      showToast(data.hasCustomImage ? 'Official Merchant QR Loaded!' : 'Dynamic Payment QR Generated!', 'success');
 
     } catch (err) {
       console.error(err);

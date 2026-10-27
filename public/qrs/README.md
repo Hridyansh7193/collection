@@ -8,6 +8,7 @@ You can drop your image files in this folder with the following names:
 - `qr3.png` -> Shared by **Group E** & **Group F**
 - `qr4.png` -> Shared by **Group G** & **Group H**
 - `qr5.png` -> Shared by **Group I** & **Group J**
+- `qr6.png` -> Shared by **Group K** & **Group L**
 
 If an image is found here, the platform can use it.
 If no image is added, the platform automatically generates a **high-resolution dynamic UPI QR code** with the exact dialed contribution amount pre-filled!
