@@ -33,7 +33,7 @@ function mapTxnToSupabase(txn) {
     payer_name: txn.payerName || 'Anonymous',
     payer_email: txn.payerEmail,
     payer_phone: txn.payerPhone || null,
-    note: txn.note || 'Contribution',
+    note: txn.role ? `${txn.role}` : (txn.note || 'Contribution'),
     status: txn.status || 'pending',
     payment_method: txn.paymentMethod || 'upi',
     razorpay_payment_id: txn.razorpayPaymentId || null,

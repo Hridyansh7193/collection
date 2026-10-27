@@ -72,6 +72,7 @@
           <div class="form-group">
             <label class="form-label" for="input-amount">
               Contribution Amount (INR) <span class="required">*</span>
+              <span id="role-min-indicator" style="font-size: 0.78rem; font-weight: normal; color: #a5b4fc; margin-left: 6px;"></span>
             </label>
             <div class="amount-input-wrapper">
               <span class="currency-symbol">₹</span>
@@ -79,8 +80,8 @@
                 type="number" 
                 id="input-amount" 
                 class="amount-input" 
-                placeholder="500" 
-                min="1" 
+                placeholder="2000" 
+                min="1500" 
                 step="any" 
                 required
               />
@@ -145,16 +146,28 @@
             </div>
           </div>
 
-          <!-- Note / Purpose -->
+          <!-- Designation / Role Dropdown -->
           <div class="form-group">
-            <label class="form-label" for="input-note">Contribution Purpose / Remarks</label>
-            <input 
-              type="text" 
-              id="input-note" 
-              class="form-input" 
-              placeholder="e.g. Community Contribution / Event Fund"
-              value="Contribution"
-            />
+            <label class="form-label" for="select-role">
+              Designation / Role <span class="required">*</span>
+            </label>
+            <div class="input-with-icon">
+              <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>
+              <select id="select-role" class="form-input form-select" required>
+                <option value="" disabled selected>-- Select Designation / Role --</option>
+                <optgroup label="Professors (Minimum ₹2,000)">
+                  <option value="Associate Professor">Associate Professor (Min ₹2,000)</option>
+                  <option value="Additional Professor">Additional Professor (Min ₹2,000)</option>
+                </optgroup>
+                <optgroup label="Residents (Minimum ₹1,500)">
+                  <option value="Senior Resident">Senior Resident (Min ₹1,500)</option>
+                  <option value="Junior Resident">Junior Resident (Min ₹1,500)</option>
+                </optgroup>
+              </select>
+            </div>
+            <div id="role-min-badge" class="role-tier-badge" style="display: none; margin-top: 8px;">
+              <span id="role-min-badge-text"></span>
+            </div>
           </div>
 
           <!-- Submit Button -->
@@ -214,6 +227,9 @@
               <div class="qr-amount-display" id="qr-display-amount">₹0.00</div>
               <div class="qr-contributor-tag">
                 Contributor: <strong id="qr-display-contributor"></strong>
+              </div>
+              <div class="qr-role-tag" id="qr-role-row" style="font-size: 0.85rem; color: #475569; margin-bottom: 2px;">
+                Designation: <strong id="qr-display-role" style="color: #6366f1;"></strong>
               </div>
               <div class="qr-email-tag">
                 Confirmation Email: <strong id="qr-display-email"></strong>
@@ -286,6 +302,10 @@
             <div class="summary-row">
               <span>Contributor:</span>
               <strong id="success-payer-name"></strong>
+            </div>
+            <div class="summary-row">
+              <span>Designation:</span>
+              <strong id="success-role" style="color: #6366f1;"></strong>
             </div>
             <div class="summary-row">
               <span>Contributor Email:</span>

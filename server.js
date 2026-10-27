@@ -58,10 +58,17 @@ app.post('/api/auth/group-login', (req, res) => {
   });
 });
 
+const ROLE_MINIMUMS = {
+  'Associate Professor': 2000,
+  'Additional Professor': 2000,
+  'Senior Resident': 1500,
+  'Junior Resident': 1500
+};
+
 // 3. Create QR Code for Contribution
 app.post('/api/collection/create-qr', async (req, res) => {
   try {
-    const { groupId, password, amount, payerName, payerEmail, payerPhone, note } = req.body;
+    const { groupId, password, amount, payerName, payerEmail, payerPhone, role } = req.body;
 
     if (!groupId || !password) {
       return res.status(401).json({ success: false, message: 'Group authentication required.' });
@@ -71,9 +78,20 @@ app.post('/api/collection/create-qr', async (req, res) => {
       return res.status(401).json({ success: false, message: 'Invalid group password.' });
     }
 
+    if (!role || !ROLE_MINIMUMS[role]) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Please select a valid Designation / Role (Associate Professor, Additional Professor, Senior Resident, or Junior Resident).' 
+      });
+    }
+
+    const minAllowed = ROLE_MINIMUMS[role];
     const numericAmount = parseFloat(amount);
-    if (isNaN(numericAmount) || numericAmount <= 0) {
-      return res.status(400).json({ success: false, message: 'Please enter a valid contribution amount greater than ₹0.' });
+    if (isNaN(numericAmount) || numericAmount < minAllowed) {
+      return res.status(400).json({ 
+        success: false, 
+        message: `Minimum deposit value for ${role} is ₹${minAllowed.toLocaleString('en-IN')}. The amount can be increased but not lowered.` 
+      });
     }
 
     if (!payerEmail || !payerEmail.includes('@')) {
@@ -88,7 +106,7 @@ app.post('/api/collection/create-qr', async (req, res) => {
       amount: numericAmount,
       groupId: group.id,
       groupName: group.name,
-      note: note || 'Contribution',
+      note: `${role} Contribution`,
       payerName: payerName || '',
       payerEmail: payerEmail.trim()
     });
@@ -98,10 +116,11 @@ app.post('/api/collection/create-qr', async (req, res) => {
       groupId: group.id,
       groupName: group.name,
       amount: numericAmount,
+      role: role,
       payerName: payerName ? payerName.trim() : 'Anonymous Contributor',
       payerEmail: payerEmail.trim(),
       payerPhone: payerPhone ? payerPhone.trim() : '',
-      note: note ? note.trim() : '',
+      note: role,
       status: 'pending',
       paymentMethod: qrResult.paymentProvider,
       pairId: qrResult.pairId,

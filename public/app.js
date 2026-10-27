@@ -16,8 +16,22 @@
   const inputPayerEmail = document.getElementById('input-payer-email');
   const inputPayerName = document.getElementById('input-payer-name');
   const inputPayerPhone = document.getElementById('input-payer-phone');
-  const inputNote = document.getElementById('input-note');
+  const selectRole = document.getElementById('select-role');
+  const roleMinBadge = document.getElementById('role-min-badge');
+  const roleMinBadgeText = document.getElementById('role-min-badge-text');
+  const roleMinIndicator = document.getElementById('role-min-indicator');
+  const qrDisplayRole = document.getElementById('qr-display-role');
+  const successRole = document.getElementById('success-role');
+  const amountPills = document.querySelectorAll('.amount-pill');
   const btnGenerateQr = document.getElementById('btn-generate-qr');
+
+  // Role Minimum Deposit Configuration
+  const ROLE_TIERS = {
+    'Associate Professor': { type: 'professor', min: 2000, label: 'Professor Tier' },
+    'Additional Professor': { type: 'professor', min: 2000, label: 'Professor Tier' },
+    'Senior Resident': { type: 'resident', min: 1500, label: 'Resident Tier' },
+    'Junior Resident': { type: 'resident', min: 1500, label: 'Resident Tier' }
+  };
 
   // Terminal States
   const stateIdle = document.getElementById('state-idle');
@@ -182,17 +196,29 @@
       return;
     }
 
-    const amount = parseFloat(inputAmount.value);
-    const payerEmail = inputPayerEmail.value.trim();
-    const payerName = inputPayerName.value.trim();
-    const payerPhone = inputPayerPhone.value.trim();
-    const note = inputNote.value.trim();
+    const selectedRole = selectRole ? selectRole.value : '';
+    if (!selectedRole || !ROLE_TIERS[selectedRole]) {
+      showToast('Please select a Designation / Role (Professor or Resident)', 'warning');
+      if (selectRole) selectRole.focus();
+      return;
+    }
 
-    if (!amount || amount <= 0) {
-      showToast('Please enter a valid amount greater than ₹0', 'warning');
+    const tier = ROLE_TIERS[selectedRole];
+    let amount = parseFloat(inputAmount.value);
+
+    if (isNaN(amount) || amount < tier.min) {
+      amount = tier.min;
+      inputAmount.value = tier.min;
+      inputAmount.classList.add('shake-warning');
+      setTimeout(() => inputAmount.classList.remove('shake-warning'), 500);
+      showToast(`Minimum deposit for ${selectedRole} is ₹${tier.min.toLocaleString('en-IN')}. Amount cannot be lowered.`, 'warning');
       inputAmount.focus();
       return;
     }
+
+    const payerEmail = inputPayerEmail.value.trim();
+    const payerName = inputPayerName.value.trim();
+    const payerPhone = inputPayerPhone.value.trim();
 
     if (!payerEmail || !payerEmail.includes('@')) {
       showToast('Please enter a valid contributor email address for the confirmation receipt', 'warning');
@@ -216,7 +242,7 @@
           payerEmail,
           payerName,
           payerPhone,
-          note
+          role: selectedRole
         })
       });
 
@@ -271,6 +297,7 @@
       qrDisplayGroup.textContent = `Group ${currentTxn.groupId}`;
       qrDisplayAmount.textContent = formatMoney(currentTxn.amount);
       qrDisplayContributor.textContent = currentTxn.payerName || 'Anonymous';
+      if (qrDisplayRole) qrDisplayRole.textContent = currentTxn.role || currentTxn.note || selectedRole;
       qrDisplayEmail.textContent = currentTxn.payerEmail;
       qrDisplayRef.textContent = currentTxn.id;
 
@@ -468,6 +495,7 @@
     successGroupTag.textContent = `Successfully credited to Group ${txn.groupId}`;
     successRefId.textContent = txn.id;
     successPayerName.textContent = txn.payerName || 'Anonymous';
+    if (successRole) successRole.textContent = txn.role || txn.note || 'Contributor';
     successPayerEmail.textContent = txn.payerEmail;
     successTimestamp.textContent = new Date(txn.completedAt || Date.now()).toLocaleString('en-IN');
 
@@ -491,7 +519,12 @@
   // Collect Another Contribution
   btnNewCollection.addEventListener('click', () => {
     collectionForm.reset();
-    inputNote.value = 'Contribution';
+    if (selectRole) selectRole.value = '';
+    if (roleMinBadge) roleMinBadge.style.display = 'none';
+    if (roleMinIndicator) roleMinIndicator.textContent = '';
+    inputAmount.value = '';
+    inputAmount.placeholder = '2000';
+    inputAmount.min = '1500';
     clearActiveQr();
     inputAmount.focus();
   });
@@ -539,6 +572,68 @@
   // Close modals on outside click
   window.addEventListener('click', (e) => {
     if (e.target === modalGroupAuth) modalGroupAuth.classList.remove('active');
+  });
+
+  // Role selection event & minimum enforcement
+  if (selectRole) {
+    selectRole.addEventListener('change', () => {
+      const selected = selectRole.value;
+      const tier = ROLE_TIERS[selected];
+      if (!tier) return;
+
+      inputAmount.min = tier.min;
+      if (roleMinIndicator) {
+        roleMinIndicator.textContent = `(Min: ₹${tier.min.toLocaleString('en-IN')})`;
+      }
+
+      if (roleMinBadge && roleMinBadgeText) {
+        roleMinBadge.style.display = 'inline-flex';
+        roleMinBadge.className = `role-tier-badge ${tier.type}`;
+        roleMinBadgeText.textContent = `🛡️ Minimum for ${selected}: ₹${tier.min.toLocaleString('en-IN')} (Can be increased, not lowered)`;
+      }
+
+      const currentVal = parseFloat(inputAmount.value) || 0;
+      if (currentVal < tier.min) {
+        inputAmount.value = tier.min;
+        showToast(`Minimum deposit for ${selected} set to ₹${tier.min.toLocaleString('en-IN')}`, 'info');
+      }
+    });
+  }
+
+  // Enforce amount cannot be lowered below selected role's minimum
+  if (inputAmount) {
+    const enforceMinimum = () => {
+      const selected = selectRole ? selectRole.value : '';
+      const tier = ROLE_TIERS[selected];
+      if (!tier) return;
+
+      const currentVal = parseFloat(inputAmount.value);
+      if (isNaN(currentVal) || currentVal < tier.min) {
+        inputAmount.value = tier.min;
+        inputAmount.classList.add('shake-warning');
+        setTimeout(() => inputAmount.classList.remove('shake-warning'), 500);
+        showToast(`Minimum deposit for ${selected} is ₹${tier.min.toLocaleString('en-IN')}. Amount cannot be lowered.`, 'warning');
+      }
+    };
+
+    inputAmount.addEventListener('change', enforceMinimum);
+    inputAmount.addEventListener('blur', enforceMinimum);
+  }
+
+  // Quick Amount Pills (+ ₹100, + ₹500, + ₹1000, etc.)
+  amountPills.forEach(pill => {
+    pill.addEventListener('click', () => {
+      const addVal = parseFloat(pill.dataset.val) || 0;
+      const selected = selectRole ? selectRole.value : '';
+      const tierMin = (ROLE_TIERS[selected] && ROLE_TIERS[selected].min) || 1500;
+      let currentVal = parseFloat(inputAmount.value);
+      if (isNaN(currentVal) || currentVal < tierMin) {
+        currentVal = tierMin;
+      }
+      const newVal = currentVal + addVal;
+      inputAmount.value = newVal;
+      showToast(`Amount increased to ₹${newVal.toLocaleString('en-IN')}`, 'info');
+    });
   });
 
   // Initial Load

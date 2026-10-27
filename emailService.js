@@ -88,6 +88,11 @@ function generateReceiptHtml(txn) {
           <td class="label">Contributor Name</td>
           <td class="value">${txn.payerName || 'Generous Contributor'}</td>
         </tr>
+        ${(txn.role || txn.note) ? `
+        <tr>
+          <td class="label">Designation / Role</td>
+          <td class="value" style="font-weight: 700; color: #1e293b;">${txn.role || txn.note}</td>
+        </tr>` : ''}
         <tr>
           <td class="label">Contributor Email</td>
           <td class="value">${txn.payerEmail}</td>
