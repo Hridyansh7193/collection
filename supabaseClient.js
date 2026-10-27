@@ -4,8 +4,8 @@ require('dotenv').config();
 let supabaseInstance = null;
 
 function getSupabaseClient() {
-  const url = process.env.SUPABASE_URL;
-  const key = process.env.SUPABASE_ANON_KEY;
+  const url = process.env.SUPABASE_URL || 'https://vtmlsqclahkpyhuqzemv.supabase.co';
+  const key = process.env.SUPABASE_ANON_KEY || 'sb_publishable_ybf-Kbni4P5AGnGtsGtxGQ_yONJrEia';
 
   if (!url || !key) {
     return null;
@@ -19,7 +19,7 @@ function getSupabaseClient() {
 }
 
 function isSupabaseConfigured() {
-  return !!(process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY);
+  return true;
 }
 
 function mapTxnToSupabase(txn) {

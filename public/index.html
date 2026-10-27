@@ -241,28 +241,27 @@
             </div>
           </div>
 
-          <!-- Actions & Simulation -->
+          <!-- Collector Actions -->
           <div class="qr-actions">
-            <!-- Simulated Payment (for instant testing of the real email) -->
-            <button id="btn-simulate-pay" class="btn btn-accent btn-block" title="Confirms payment and dispatches the confirmation email">
-              <span class="btn-icon">🚀</span>
-              <span>Simulate Successful Payment (Triggers Real Email)</span>
+            <div class="collector-instruction-box" style="background: rgba(16, 185, 129, 0.08); border: 1px dashed rgba(16, 185, 129, 0.3); border-radius: var(--radius-md); padding: 12px 14px; margin-bottom: 14px; text-align: center; font-size: 0.85rem; color: #a7f3d0; line-height: 1.4;">
+              💰 When you receive the payment notification / soundbox alert, click <strong>"Payment Accepted"</strong> below to record the entry in the database and email the contributor their official receipt.
+            </div>
+
+            <!-- Primary Action: Payment Accepted -->
+            <button id="btn-accept-payment" class="btn btn-success-glow btn-block btn-lg" title="Records payment in database and sends confirmation email">
+              <span class="btn-icon">✅</span>
+              <span>Payment Accepted — Send Email & Record</span>
             </button>
 
-            <div class="actions-secondary">
+            <div class="actions-secondary" style="margin-top: 12px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
               <!-- Razorpay Checkout Button (if keys present) -->
               <button id="btn-rzp-checkout" class="btn btn-secondary btn-sm" style="display: none;">
                 💳 Open Razorpay Checkout
               </button>
 
-              <!-- Manual Confirm -->
-              <button id="btn-manual-confirm" class="btn btn-secondary btn-sm">
-                ✓ Collector Manual Confirm
-              </button>
-
-              <!-- Cancel / New -->
+              <!-- Cancel / Discard -->
               <button id="btn-cancel-qr" class="btn btn-ghost btn-sm">
-                ✕ Cancel & Clear
+                ✕ Cancel & Start Over
               </button>
             </div>
           </div>

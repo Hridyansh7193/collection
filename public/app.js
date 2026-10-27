@@ -46,8 +46,7 @@
   const qrDisplayContributor = document.getElementById('qr-display-contributor');
   const qrDisplayEmail = document.getElementById('qr-display-email');
   const qrDisplayRef = document.getElementById('qr-display-ref');
-  const btnSimulatePay = document.getElementById('btn-simulate-pay');
-  const btnManualConfirm = document.getElementById('btn-manual-confirm');
+  const btnAcceptPayment = document.getElementById('btn-accept-payment');
   const btnCancelQr = document.getElementById('btn-cancel-qr');
   const btnRzpCheckout = document.getElementById('btn-rzp-checkout');
 
@@ -362,68 +361,44 @@
     }
   }
 
-  // 6. Simulated Payment (Instant Email Delivery Test)
-  btnSimulatePay.addEventListener('click', async () => {
-    if (!currentTxn) return;
-    btnSimulatePay.disabled = true;
-    btnSimulatePay.innerHTML = '<span>Processing Payment & Dispatching Email...</span>';
+  // 6. Payment Accepted by Collector (Sends Email & Records in Database)
+  if (btnAcceptPayment) {
+    btnAcceptPayment.addEventListener('click', async () => {
+      if (!currentTxn) return;
 
-    try {
-      const res = await fetch('/api/collection/confirm-payment', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          txnId: currentTxn.id,
-          paymentMethod: 'simulation',
-          paymentId: 'SIM-' + Date.now().toString(36).toUpperCase()
-        })
-      });
+      btnAcceptPayment.disabled = true;
+      btnAcceptPayment.innerHTML = '<span>⏳ Recording in Database & Sending Email...</span>';
 
-      const data = await res.json();
-      if (data.success) {
-        stopPollingTxn();
-        handlePaymentSuccess(data.transaction, data.emailResult);
-      } else {
-        showToast(data.message || 'Payment simulation failed', 'error');
+      try {
+        const res = await fetch('/api/collection/confirm-payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            txnId: currentTxn.id,
+            paymentMethod: 'UPI (Collector Verified)',
+            paymentId: 'CONF-' + Date.now().toString(36).toUpperCase()
+          })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          stopPollingTxn();
+          handlePaymentSuccess(data.transaction, data.emailResult);
+        } else {
+          showToast(data.message || 'Payment acceptance failed', 'error');
+          btnAcceptPayment.disabled = false;
+          btnAcceptPayment.innerHTML = '<span class="btn-icon">✅</span><span>Payment Accepted — Send Email & Record</span>';
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('Error recording payment in database', 'error');
+        btnAcceptPayment.disabled = false;
+        btnAcceptPayment.innerHTML = '<span class="btn-icon">✅</span><span>Payment Accepted — Send Email & Record</span>';
       }
-    } catch (err) {
-      console.error(err);
-      showToast('Error during payment simulation', 'error');
-    } finally {
-      btnSimulatePay.disabled = false;
-      btnSimulatePay.innerHTML = '<span class="btn-icon">🚀</span><span>Simulate Successful Payment (Triggers Real Email)</span>';
-    }
-  });
+    });
+  }
 
-  // Manual Collector Confirmation
-  btnManualConfirm.addEventListener('click', async () => {
-    if (!currentTxn) return;
-    if (!confirm(`Confirm that ₹${currentTxn.amount} was received from ${currentTxn.payerEmail} for Group ${currentTxn.groupId}?`)) {
-      return;
-    }
 
-    btnManualConfirm.disabled = true;
-    try {
-      const res = await fetch('/api/collection/confirm-payment', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          txnId: currentTxn.id,
-          paymentMethod: 'upi-direct'
-        })
-      });
-
-      const data = await res.json();
-      if (data.success) {
-        stopPollingTxn();
-        handlePaymentSuccess(data.transaction, data.emailResult);
-      }
-    } catch (err) {
-      showToast('Error confirming payment', 'error');
-    } finally {
-      btnManualConfirm.disabled = false;
-    }
-  });
 
   // Cancel QR
   btnCancelQr.addEventListener('click', () => {
@@ -501,19 +476,19 @@
 
     // Email dispatch status
     if (txn.emailSent) {
-      emailStatusHeadline.textContent = 'Confirmation Email Dispatched ✅';
+      emailStatusHeadline.textContent = 'Payment Accepted & Email Dispatched ✅';
       emailStatusHeadline.style.color = '#34d399';
-      emailStatusDetails.textContent = `Official receipt for ${formatMoney(txn.amount)} sent to ${txn.payerEmail}`;
+      emailStatusDetails.textContent = `Recorded in database! Official receipt for ${formatMoney(txn.amount)} was dispatched to ${txn.payerEmail}.`;
     } else {
-      emailStatusHeadline.textContent = 'Email Dispatch Notice ⚠️';
+      emailStatusHeadline.textContent = 'Payment Recorded in Database ✅ (Email Notice)';
       emailStatusHeadline.style.color = '#fbbf24';
       emailStatusDetails.textContent = txn.emailError 
-        ? `${txn.emailError}`
-        : `Email delivery queued. Ensure Gmail credentials are configured in server .env.`;
+        ? `Successfully saved to database! Note: ${txn.emailError}`
+        : `Successfully saved to database! Receipt queued for delivery to ${txn.payerEmail}.`;
     }
 
     setTerminalState('success');
-    showToast(`Payment Confirmed for ₹${txn.amount}!`, 'success');
+    showToast(`Payment of ₹${txn.amount} Accepted & Saved to Database!`, 'success');
   }
 
   // Collect Another Contribution

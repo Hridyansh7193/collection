@@ -2,8 +2,8 @@ const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 function getTransporter() {
-  const user = process.env.GMAIL_USER;
-  const pass = process.env.GMAIL_APP_PASSWORD;
+  const user = process.env.GMAIL_USER || 'cerebrexia2026@gmail.com';
+  const pass = process.env.GMAIL_APP_PASSWORD || 'guwfymxqxybxxiip';
 
   if (!user || !pass) {
     return null;
@@ -159,8 +159,8 @@ async function sendConfirmationEmail(txn) {
     };
   }
 
-  const senderName = process.env.SENDER_NAME || 'Money Collection Platform';
-  const senderEmail = process.env.GMAIL_USER;
+  const senderName = process.env.SENDER_NAME || 'CEREBREXIA 2026';
+  const senderEmail = process.env.GMAIL_USER || 'cerebrexia2026@gmail.com';
 
   const mailOptions = {
     from: `"${senderName}" <${senderEmail}>`,

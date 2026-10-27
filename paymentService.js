@@ -72,7 +72,7 @@ async function generatePaymentQr({ txnId, amount, groupId, groupName, note, paye
   });
 
   const qrDataUrl = await QRCode.toDataURL(upiString, {
-    width: 380,
+    width: 480,
     margin: 2,
     errorCorrectionLevel: 'H',
     color: {
