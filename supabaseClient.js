@@ -23,6 +23,11 @@ function isSupabaseConfigured() {
 }
 
 function mapTxnToSupabase(txn) {
+  const deptRole = txn.department 
+    ? `${txn.department} - ${txn.role || ''}` 
+    : (txn.role ? `${txn.role}` : (txn.note || 'Contribution'));
+  const fullNote = txn.remarks ? `${deptRole} | Remarks: ${txn.remarks}` : deptRole;
+
   return {
     id: txn.id,
     group_id: txn.groupId,
@@ -33,7 +38,7 @@ function mapTxnToSupabase(txn) {
     payer_name: txn.payerName || 'Anonymous',
     payer_email: txn.payerEmail,
     payer_phone: txn.payerPhone || null,
-    note: txn.department ? `${txn.department} - ${txn.role || ''}` : (txn.role ? `${txn.role}` : (txn.note || 'Contribution')),
+    note: fullNote,
     status: txn.status || 'pending',
     payment_method: txn.paymentMethod || 'upi',
     razorpay_payment_id: txn.razorpayPaymentId || null,

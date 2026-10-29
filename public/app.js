@@ -19,20 +19,29 @@
   const selectDepartment = document.getElementById('select-department');
   const departmentHint = document.getElementById('department-hint');
   const selectRole = document.getElementById('select-role');
+  const inputRemarks = document.getElementById('input-remarks');
   const roleMinBadge = document.getElementById('role-min-badge');
   const roleMinBadgeText = document.getElementById('role-min-badge-text');
   const roleMinIndicator = document.getElementById('role-min-indicator');
   const qrDisplayDepartment = document.getElementById('qr-display-department');
   const qrDisplayRole = document.getElementById('qr-display-role');
+  const qrRemarksRow = document.getElementById('qr-remarks-row');
+  const qrDisplayRemarks = document.getElementById('qr-display-remarks');
   const successDepartment = document.getElementById('success-department');
   const successRole = document.getElementById('success-role');
+  const successPaymentMethod = document.getElementById('success-payment-method');
+  const successRemarksRow = document.getElementById('success-remarks-row');
+  const successRemarks = document.getElementById('success-remarks');
   const amountPills = document.querySelectorAll('.amount-pill');
   const btnGenerateQr = document.getElementById('btn-generate-qr');
+  const btnPayCash = document.getElementById('btn-pay-cash');
 
-  // Role Minimum Deposit Configuration
+  // Role Minimum Deposit Configuration (Faculty ₹2,000 min, Residents ₹1,500 min)
   const ROLE_TIERS = {
-    'Associate Professor': { type: 'professor', min: 2000, label: 'Professor Tier' },
-    'Additional Professor': { type: 'professor', min: 2000, label: 'Professor Tier' },
+    'HOD': { type: 'faculty', min: 2000, label: 'Faculty Tier' },
+    'Professor': { type: 'faculty', min: 2000, label: 'Faculty Tier' },
+    'Associate Professor': { type: 'faculty', min: 2000, label: 'Faculty Tier' },
+    'Additional Professor': { type: 'faculty', min: 2000, label: 'Faculty Tier' },
     'Senior Resident': { type: 'resident', min: 1500, label: 'Resident Tier' },
     'Junior Resident': { type: 'resident', min: 1500, label: 'Resident Tier' }
   };
@@ -223,7 +232,7 @@
 
     const selectedRole = selectRole ? selectRole.value : '';
     if (!selectedRole || !ROLE_TIERS[selectedRole]) {
-      showToast('Please select a Designation / Role (Professor or Resident)', 'warning');
+      showToast('Please select a Designation / Role (Faculty or Resident)', 'warning');
       if (selectRole) selectRole.focus();
       return;
     }
@@ -244,6 +253,7 @@
     const payerEmail = inputPayerEmail.value.trim();
     const payerName = inputPayerName.value.trim();
     const payerPhone = inputPayerPhone.value.trim();
+    const remarks = inputRemarks ? inputRemarks.value.trim() : '';
 
     if (!payerEmail || !payerEmail.includes('@')) {
       showToast('Please enter a valid contributor email address for the confirmation receipt', 'warning');
@@ -268,7 +278,8 @@
           payerEmail,
           payerName,
           payerPhone,
-          role: selectedRole
+          role: selectedRole,
+          remarks
         })
       });
 
@@ -325,6 +336,12 @@
       qrDisplayContributor.textContent = currentTxn.payerName || 'Anonymous';
       if (qrDisplayDepartment) qrDisplayDepartment.textContent = currentTxn.department || selectedDepartment;
       if (qrDisplayRole) qrDisplayRole.textContent = currentTxn.role || currentTxn.note || selectedRole;
+      if (currentTxn.remarks) {
+        if (qrRemarksRow) qrRemarksRow.style.display = 'block';
+        if (qrDisplayRemarks) qrDisplayRemarks.textContent = currentTxn.remarks;
+      } else {
+        if (qrRemarksRow) qrRemarksRow.style.display = 'none';
+      }
       qrDisplayEmail.textContent = currentTxn.payerEmail;
       qrDisplayRef.textContent = currentTxn.id;
 
@@ -350,9 +367,102 @@
       showToast('Server connection error while generating QR', 'error');
     } finally {
       btnGenerateQr.disabled = false;
-      btnGenerateQr.innerHTML = '<span class="btn-icon">⚡</span><span>Generate Payment QR Code</span>';
+      btnGenerateQr.innerHTML = '<span class="btn-icon">⚡</span><span>Generate Payment QR Code (UPI)</span>';
     }
   });
+
+  // Pay by Cash Option (No QR code generated, direct DB entry and instant receipt email)
+  if (btnPayCash) {
+    btnPayCash.addEventListener('click', async () => {
+      if (!activeGroupId) {
+        showToast('Please select and unlock a group first', 'warning');
+        return;
+      }
+
+      if (!unlockedGroups[activeGroupId]) {
+        promptGroupPassword(activeGroupId);
+        return;
+      }
+
+      const selectedDepartment = selectDepartment ? selectDepartment.value : '';
+      if (!selectedDepartment) {
+        showToast('Please select a Department from the dropdown', 'warning');
+        if (selectDepartment) selectDepartment.focus();
+        return;
+      }
+
+      const selectedRole = selectRole ? selectRole.value : '';
+      if (!selectedRole || !ROLE_TIERS[selectedRole]) {
+        showToast('Please select a Designation / Role (Faculty or Resident)', 'warning');
+        if (selectRole) selectRole.focus();
+        return;
+      }
+
+      const tier = ROLE_TIERS[selectedRole];
+      let amount = parseFloat(inputAmount.value);
+
+      if (isNaN(amount) || amount < tier.min) {
+        amount = tier.min;
+        inputAmount.value = tier.min;
+        inputAmount.classList.add('shake-warning');
+        setTimeout(() => inputAmount.classList.remove('shake-warning'), 500);
+        showToast(`Minimum deposit for ${selectedRole} is ₹${tier.min.toLocaleString('en-IN')}. Amount cannot be lowered.`, 'warning');
+        inputAmount.focus();
+        return;
+      }
+
+      const payerEmail = inputPayerEmail.value.trim();
+      const payerName = inputPayerName.value.trim();
+      const payerPhone = inputPayerPhone.value.trim();
+      const remarks = inputRemarks ? inputRemarks.value.trim() : '';
+
+      if (!payerEmail || !payerEmail.includes('@')) {
+        showToast('Please enter a valid contributor email address for the confirmation receipt', 'warning');
+        inputPayerEmail.focus();
+        return;
+      }
+
+      const password = unlockedGroups[activeGroupId];
+
+      btnPayCash.disabled = true;
+      btnPayCash.innerHTML = '<span>⏳ Recording Cash & Dispatching Email...</span>';
+
+      try {
+        const res = await fetch('/api/collection/record-cash', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            groupId: activeGroupId,
+            password,
+            amount,
+            department: selectedDepartment,
+            payerEmail,
+            payerName,
+            payerPhone,
+            role: selectedRole,
+            remarks
+          })
+        });
+
+        const data = await res.json();
+
+        if (!data.success) {
+          showToast(data.message || 'Failed to record cash payment', 'error');
+          return;
+        }
+
+        stopPollingTxn();
+        handlePaymentSuccess(data.transaction, data.emailResult);
+        showToast(`Cash payment of ₹${amount.toLocaleString('en-IN')} recorded & official receipt emailed!`, 'success');
+      } catch (err) {
+        console.error('Error recording cash payment:', err);
+        showToast('Server connection error while recording cash payment', 'error');
+      } finally {
+        btnPayCash.disabled = false;
+        btnPayCash.innerHTML = '<span class="btn-icon">💵</span><span>Received Cash — Record & Send Email Receipt</span>';
+      }
+    });
+  }
 
   // Quick Amount Pills
   document.querySelectorAll('.amount-pill').forEach(pill => {
@@ -500,6 +610,16 @@
     successPayerName.textContent = txn.payerName || 'Anonymous';
     if (successDepartment) successDepartment.textContent = txn.department || 'N/A';
     if (successRole) successRole.textContent = txn.role || txn.note || 'Contributor';
+    if (successPaymentMethod) {
+      successPaymentMethod.textContent = txn.paymentMethod || 'UPI / QR';
+      successPaymentMethod.style.color = (txn.paymentMethod && txn.paymentMethod.toLowerCase().includes('cash')) ? '#10b981' : '#6366f1';
+    }
+    if (txn.remarks) {
+      if (successRemarksRow) successRemarksRow.style.display = 'flex';
+      if (successRemarks) successRemarks.textContent = txn.remarks;
+    } else {
+      if (successRemarksRow) successRemarksRow.style.display = 'none';
+    }
     successPayerEmail.textContent = txn.payerEmail;
     successTimestamp.textContent = new Date(txn.completedAt || Date.now()).toLocaleString('en-IN');
 
@@ -524,6 +644,9 @@
   btnNewCollection.addEventListener('click', () => {
     collectionForm.reset();
     if (selectRole) selectRole.value = '';
+    if (inputRemarks) inputRemarks.value = '';
+    if (qrRemarksRow) qrRemarksRow.style.display = 'none';
+    if (successRemarksRow) successRemarksRow.style.display = 'none';
     if (selectDepartment) {
       if (activeGroupId) {
         const g = groups.find(x => x.id === activeGroupId);

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,16 +8,20 @@
   <!-- Google Fonts: Outfit & Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
   <!-- Header / Navigation -->
   <header class="app-header">
     <div class="nav-container">
       <div class="brand-area">
         <div class="brand-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+            stroke-linecap="round" stroke-linejoin="round">
             <rect x="2" y="5" width="20" height="14" rx="2"></rect>
             <line x1="2" y1="10" x2="22" y2="10"></line>
             <circle cx="7" cy="15" r="1"></circle>
@@ -44,7 +49,8 @@
       <div class="section-header">
         <div>
           <h2 class="section-title">Select Your Group (A to L)</h2>
-          <p class="section-subtitle">Select your group and enter your group password to unlock the collection terminal.</p>
+          <p class="section-subtitle">Select your group and enter your group password to unlock the collection terminal.
+          </p>
         </div>
       </div>
 
@@ -59,7 +65,9 @@
       <div class="collector-card">
         <div class="card-header">
           <div class="header-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
           </div>
           <div>
             <h3 class="card-title">Collector Terminal — <span id="form-group-title">Select Group</span></h3>
@@ -72,19 +80,13 @@
           <div class="form-group">
             <label class="form-label" for="input-amount">
               Contribution Amount (INR) <span class="required">*</span>
-              <span id="role-min-indicator" style="font-size: 0.78rem; font-weight: normal; color: #a5b4fc; margin-left: 6px;"></span>
+              <span id="role-min-indicator"
+                style="font-size: 0.78rem; font-weight: normal; color: #a5b4fc; margin-left: 6px;"></span>
             </label>
             <div class="amount-input-wrapper">
               <span class="currency-symbol">₹</span>
-              <input 
-                type="number" 
-                id="input-amount" 
-                class="amount-input" 
-                placeholder="2000" 
-                min="1500" 
-                step="any" 
-                required
-              />
+              <input type="number" id="input-amount" class="amount-input" placeholder="2000" min="1500" step="any"
+                required />
             </div>
             <!-- Quick Denomination Pills -->
             <div class="quick-amounts">
@@ -102,17 +104,17 @@
               Contributor Email Address <span class="required">*</span>
             </label>
             <div class="input-with-icon">
-              <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-              <input 
-                type="email" 
-                id="input-payer-email" 
-                class="form-input" 
-                placeholder="contributor@example.com" 
-                required
-              />
+              <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+              <input type="email" id="input-payer-email" class="form-input" placeholder="contributor@example.com"
+                required />
             </div>
             <div class="form-hint">
-              <strong>Receipt Notice:</strong> An official confirmation email with the exact amount paid will be dispatched to this address upon payment.
+              <strong>Receipt Notice:</strong> An official confirmation email with the exact amount paid will be
+              dispatched to this address upon payment.
             </div>
           </div>
 
@@ -121,13 +123,12 @@
             <div class="form-group">
               <label class="form-label" for="input-payer-name">Contributor Name</label>
               <div class="input-with-icon">
-                <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                <input 
-                  type="text" 
-                  id="input-payer-name" 
-                  class="form-input" 
-                  placeholder="e.g. Rahul Sharma"
-                />
+                <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <input type="text" id="input-payer-name" class="form-input" placeholder="e.g. Rahul Sharma" />
               </div>
             </div>
 
@@ -135,13 +136,13 @@
             <div class="form-group">
               <label class="form-label" for="input-payer-phone">Mobile / WhatsApp (Optional)</label>
               <div class="input-with-icon">
-                <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-                <input 
-                  type="tel" 
-                  id="input-payer-phone" 
-                  class="form-input" 
-                  placeholder="e.g. +91 98765 43210"
-                />
+                <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2">
+                  <path
+                    d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+                  </path>
+                </svg>
+                <input type="tel" id="input-payer-phone" class="form-input" placeholder="e.g. +91 98765 43210" />
               </div>
             </div>
           </div>
@@ -153,7 +154,10 @@
                 Department <span class="required">*</span>
               </label>
               <div class="input-with-icon">
-                <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2">
+                  <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                </svg>
                 <select id="select-department" class="form-input form-select" required>
                   <option value="" disabled selected>-- Select Department --</option>
                 </select>
@@ -169,10 +173,17 @@
                 Designation / Role <span class="required">*</span>
               </label>
               <div class="input-with-icon">
-                <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>
+                <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="8.5" cy="7" r="4"></circle>
+                  <polyline points="17 11 19 13 23 9"></polyline>
+                </svg>
                 <select id="select-role" class="form-input form-select" required>
                   <option value="" disabled selected>-- Select Designation --</option>
-                  <optgroup label="Professors (Minimum ₹2,000)">
+                  <optgroup label="Faculty (Minimum ₹2,000)">
+                    <option value="HOD">HOD (Min ₹2,000)</option>
+                    <option value="Professor">Professor (Min ₹2,000)</option>
                     <option value="Associate Professor">Associate Professor (Min ₹2,000)</option>
                     <option value="Additional Professor">Additional Professor (Min ₹2,000)</option>
                   </optgroup>
@@ -185,15 +196,44 @@
             </div>
           </div>
 
+          <!-- Remarks / Note Option (Stored in DB) -->
+          <div class="form-group" style="margin-bottom: 18px;">
+            <label class="form-label" for="input-remarks">
+              Remarks <span class="form-optional" style="font-size: 0.8rem; color: #94a3b8; font-weight: normal;">(Optional)</span>
+            </label>
+            <div class="input-with-icon">
+              <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+              <input 
+                type="text" 
+                id="input-remarks" 
+                class="form-input" 
+                placeholder="e.g. In appreciation of team / Special donation note"
+                maxlength="200"
+              />
+            </div>
+            <div class="form-hint">
+              Remarks are recorded directly into the database and printed on the official receipt.
+            </div>
+          </div>
+
           <div id="role-min-badge" class="role-tier-badge" style="display: none; margin-bottom: 20px;">
             <span id="role-min-badge-text"></span>
           </div>
 
-          <!-- Submit Button -->
-          <button type="submit" id="btn-generate-qr" class="btn btn-primary btn-block btn-lg">
-            <span class="btn-icon">⚡</span>
-            <span>Generate Payment QR Code</span>
-          </button>
+          <!-- Payment Options: Online QR vs Received Cash -->
+          <div class="payment-action-buttons" style="display: flex; flex-direction: column; gap: 10px; margin-top: 6px;">
+            <!-- UPI QR Button -->
+            <button type="submit" id="btn-generate-qr" class="btn btn-primary btn-block btn-lg">
+              <span class="btn-icon">⚡</span>
+              <span>Generate Payment QR Code (UPI)</span>
+            </button>
+
+            <!-- Pay by Cash Button (No QR, Instant Record & Email) -->
+            <button type="button" id="btn-pay-cash" class="btn btn-cash btn-block btn-lg" style="background: linear-gradient(135deg, #059669 0%, #10b981 100%); color: #ffffff; border: 1px solid rgba(16, 185, 129, 0.4); box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25); font-weight: 700; cursor: pointer;">
+              <span class="btn-icon">💵</span>
+              <span>Received Cash — Record & Send Email Receipt</span>
+            </button>
+          </div>
         </form>
       </div>
 
@@ -236,8 +276,10 @@
           <div class="qr-card">
             <div class="qr-frame">
               <img id="qr-image" src="" alt="Scan QR Code to Pay" class="qr-img" />
-              <div class="qr-scan-guide" id="qr-scan-guide-text">Scan with any UPI App (GPay, PhonePe, Paytm, BHIM)</div>
-              <button type="button" id="btn-toggle-qr-type" class="btn btn-secondary btn-sm" style="display: none; margin-top: 8px;">
+              <div class="qr-scan-guide" id="qr-scan-guide-text">Scan with any UPI App (GPay, PhonePe, Paytm, BHIM)
+              </div>
+              <button type="button" id="btn-toggle-qr-type" class="btn btn-secondary btn-sm"
+                style="display: none; margin-top: 8px;">
                 🔄 Switch to Dynamic Amount QR
               </button>
             </div>
@@ -253,11 +295,15 @@
               <div class="qr-role-tag" id="qr-role-row" style="font-size: 0.85rem; color: #475569; margin-bottom: 2px;">
                 Designation: <strong id="qr-display-role" style="color: #6366f1;"></strong>
               </div>
+              <div class="qr-remarks-tag" id="qr-remarks-row" style="display: none; font-size: 0.85rem; color: #475569; margin-bottom: 2px;">
+                Remarks: <strong id="qr-display-remarks" style="color: #0284c7;"></strong>
+              </div>
               <div class="qr-email-tag">
                 Confirmation Email: <strong id="qr-display-email"></strong>
               </div>
               <div class="qr-pair-tag" style="font-size: 0.8rem; color: #475569; margin-bottom: 4px;">
-                Destination: <strong id="qr-display-pair" style="color: #6366f1;">QR 1</strong> &bull; <code id="qr-display-upi" style="font-family: monospace;">contribute@upi</code>
+                Destination: <strong id="qr-display-pair" style="color: #6366f1;">QR 1</strong> &bull; <code
+                  id="qr-display-upi" style="font-family: monospace;">contribute@upi</code>
               </div>
               <div class="qr-ref-code">Ref: <span id="qr-display-ref"></span></div>
             </div>
@@ -265,17 +311,21 @@
 
           <!-- Collector Actions -->
           <div class="qr-actions">
-            <div class="collector-instruction-box" style="background: rgba(16, 185, 129, 0.08); border: 1px dashed rgba(16, 185, 129, 0.3); border-radius: var(--radius-md); padding: 12px 14px; margin-bottom: 14px; text-align: center; font-size: 0.85rem; color: #a7f3d0; line-height: 1.4;">
-              💰 When you receive the payment notification / soundbox alert, click <strong>"Payment Accepted"</strong> below to record the entry in the database and email the contributor their official receipt.
+            <div class="collector-instruction-box"
+              style="background: rgba(16, 185, 129, 0.08); border: 1px dashed rgba(16, 185, 129, 0.3); border-radius: var(--radius-md); padding: 12px 14px; margin-bottom: 14px; text-align: center; font-size: 0.85rem; color: #a7f3d0; line-height: 1.4;">
+              💰 When you receive the payment notification / soundbox alert, click <strong>"Payment Accepted"</strong>
+              below to record the entry in the database and email the contributor their official receipt.
             </div>
 
             <!-- Primary Action: Payment Accepted -->
-            <button id="btn-accept-payment" class="btn btn-success-glow btn-block btn-lg" title="Records payment in database and sends confirmation email">
+            <button id="btn-accept-payment" class="btn btn-success-glow btn-block btn-lg"
+              title="Records payment in database and sends confirmation email">
               <span class="btn-icon">✅</span>
               <span>Payment Accepted — Send Email & Record</span>
             </button>
 
-            <div class="actions-secondary" style="margin-top: 12px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+            <div class="actions-secondary"
+              style="margin-top: 12px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
               <!-- Razorpay Checkout Button (if keys present) -->
               <button id="btn-rzp-checkout" class="btn btn-secondary btn-sm" style="display: none;">
                 💳 Open Razorpay Checkout
@@ -306,7 +356,10 @@
           <!-- Email Dispatch Status Box -->
           <div class="email-status-card" id="email-status-box">
             <div class="email-icon-row">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
               <span id="email-status-headline">Confirmation Email Status</span>
             </div>
             <div class="email-status-details" id="email-status-details">
@@ -331,6 +384,14 @@
             <div class="summary-row">
               <span>Designation:</span>
               <strong id="success-role" style="color: #6366f1;"></strong>
+            </div>
+            <div class="summary-row">
+              <span>Payment Mode:</span>
+              <strong id="success-payment-method" style="color: #10b981;">UPI / QR</strong>
+            </div>
+            <div class="summary-row" id="success-remarks-row" style="display: none;">
+              <span>Remarks:</span>
+              <strong id="success-remarks" style="color: #0284c7;"></strong>
             </div>
             <div class="summary-row">
               <span>Contributor Email:</span>
@@ -369,15 +430,13 @@
         <div class="form-group">
           <label class="form-label" for="auth-group-password">Group Password</label>
           <div class="input-with-icon">
-            <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-            <input 
-              type="password" 
-              id="auth-group-password" 
-              class="form-input" 
-              placeholder="Enter password..." 
-              required
-              autocomplete="current-password"
-            />
+            <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <input type="password" id="auth-group-password" class="form-input" placeholder="Enter password..." required
+              autocomplete="current-password" />
           </div>
         </div>
 
@@ -398,4 +457,5 @@
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <script src="app.js"></script>
 </body>
+
 </html>

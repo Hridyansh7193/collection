@@ -529,6 +529,7 @@ select.form-input option {
   transition: all 0.25s ease;
 }
 
+.role-tier-badge.faculty,
 .role-tier-badge.professor {
   background: rgba(139, 92, 246, 0.16);
   color: #c4b5fd;

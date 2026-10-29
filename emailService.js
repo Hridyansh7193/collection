@@ -98,6 +98,11 @@ function generateReceiptHtml(txn) {
           <td class="label">Designation / Role</td>
           <td class="value" style="font-weight: 700; color: #1e293b;">${txn.role || txn.note}</td>
         </tr>` : ''}
+        ${txn.remarks ? `
+        <tr>
+          <td class="label">Remarks / Note</td>
+          <td class="value" style="font-weight: 700; color: #4338ca;">${txn.remarks}</td>
+        </tr>` : ''}
         <tr>
           <td class="label">Contributor Email</td>
           <td class="value">${txn.payerEmail}</td>
@@ -110,6 +115,10 @@ function generateReceiptHtml(txn) {
         <tr>
           <td class="label">Date & Time</td>
           <td class="value">${dateStr}</td>
+        </tr>
+        <tr>
+          <td class="label">Payment Mode</td>
+          <td class="value" style="font-weight: 700; color: #10b981;">${txn.paymentMethod || 'UPI / QR'}</td>
         </tr>
         <tr>
           <td class="label">Payment Status</td>
@@ -178,9 +187,10 @@ CONTRIBUTION DETAILS:
 Receipt Ref ID:      ${txn.id}
 Contribution Group:  Group ${txn.groupId}
 Medical Department:  ${txn.department || 'N/A'}
-Designation / Role:  ${txn.role || txn.note || 'Contributor'}
+Designation / Role:  ${txn.role || txn.note || 'Contributor'}${txn.remarks ? `\nRemarks / Note:      ${txn.remarks}` : ''}
 Contributor Name:    ${txn.payerName || 'Generous Contributor'}
 Amount Paid:         ${formattedAmount}
+Payment Mode:        ${txn.paymentMethod || 'UPI / QR'}
 Payment Status:      Accepted & Verified
 Date & Time:         ${dateStr}
 ------------------------------------------

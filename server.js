@@ -59,6 +59,8 @@ app.post('/api/auth/group-login', (req, res) => {
 });
 
 const ROLE_MINIMUMS = {
+  'HOD': 2000,
+  'Professor': 2000,
   'Associate Professor': 2000,
   'Additional Professor': 2000,
   'Senior Resident': 1500,
@@ -68,7 +70,7 @@ const ROLE_MINIMUMS = {
 // 3. Create QR Code for Contribution
 app.post('/api/collection/create-qr', async (req, res) => {
   try {
-    const { groupId, password, amount, payerName, payerEmail, payerPhone, role, department } = req.body;
+    const { groupId, password, amount, payerName, payerEmail, payerPhone, role, department, remarks } = req.body;
 
     if (!groupId || !password) {
       return res.status(401).json({ success: false, message: 'Group authentication required.' });
@@ -90,7 +92,7 @@ app.post('/api/collection/create-qr', async (req, res) => {
     if (!role || !ROLE_MINIMUMS[role]) {
       return res.status(400).json({ 
         success: false, 
-        message: 'Please select a valid Designation / Role (Associate Professor, Additional Professor, Senior Resident, or Junior Resident).' 
+        message: 'Please select a valid Designation / Role (HOD, Professor, Associate Professor, Additional Professor, Senior Resident, or Junior Resident).' 
       });
     }
 
@@ -108,6 +110,10 @@ app.post('/api/collection/create-qr', async (req, res) => {
     }
 
     const txnId = generateTxnId(group.id);
+    const cleanRemarks = remarks && typeof remarks === 'string' ? remarks.trim().substring(0, 500) : '';
+    const noteContent = cleanRemarks 
+      ? `${department.trim()} | ${role} | ${cleanRemarks}` 
+      : `${department.trim()} | ${role}`;
 
     const qrResult = await paymentService.generatePaymentQr({
       txnId,
@@ -126,10 +132,11 @@ app.post('/api/collection/create-qr', async (req, res) => {
       amount: numericAmount,
       department: department.trim(),
       role: role,
+      remarks: cleanRemarks,
       payerName: payerName ? payerName.trim() : 'Anonymous Contributor',
       payerEmail: payerEmail.trim(),
       payerPhone: payerPhone ? payerPhone.trim() : '',
-      note: `${department.trim()} | ${role}`,
+      note: noteContent,
       status: 'pending',
       paymentMethod: qrResult.paymentProvider,
       pairId: qrResult.pairId,
@@ -163,6 +170,101 @@ app.post('/api/collection/create-qr', async (req, res) => {
   } catch (err) {
     console.error('Error generating payment QR:', err);
     res.status(500).json({ success: false, message: 'Failed to generate payment QR: ' + err.message });
+  }
+});
+
+// 3b. Record Cash Payment directly (No QR code generated)
+app.post('/api/collection/record-cash', async (req, res) => {
+  try {
+    const { groupId, password, amount, payerName, payerEmail, payerPhone, role, department, remarks } = req.body;
+
+    if (!groupId || !password) {
+      return res.status(401).json({ success: false, message: 'Group authentication required.' });
+    }
+
+    if (!validateGroupPassword(groupId, password)) {
+      return res.status(401).json({ success: false, message: 'Invalid group password.' });
+    }
+
+    const group = getGroup(groupId);
+    if (!group) {
+      return res.status(404).json({ success: false, message: 'Group not found.' });
+    }
+
+    if (!department) {
+      return res.status(400).json({ success: false, message: 'Please select a Medical Department from the dropdown.' });
+    }
+
+    if (!role || !ROLE_MINIMUMS[role]) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Please select a valid Designation / Role (HOD, Professor, Associate Professor, Additional Professor, Senior Resident, or Junior Resident).' 
+      });
+    }
+
+    const minAllowed = ROLE_MINIMUMS[role];
+    const numericAmount = parseFloat(amount);
+    if (isNaN(numericAmount) || numericAmount < minAllowed) {
+      return res.status(400).json({ 
+        success: false, 
+        message: `Minimum deposit value for ${role} is ₹${minAllowed.toLocaleString('en-IN')}. The amount can be increased but not lowered.` 
+      });
+    }
+
+    if (!payerEmail || !payerEmail.includes('@')) {
+      return res.status(400).json({ success: false, message: 'A valid contributor email address is required for sending the confirmation.' });
+    }
+
+    const txnId = generateTxnId(group.id);
+    const cleanRemarks = remarks && typeof remarks === 'string' ? remarks.trim().substring(0, 500) : '';
+    const noteContent = cleanRemarks 
+      ? `${department.trim()} | ${role} | ${cleanRemarks}` 
+      : `${department.trim()} | ${role}`;
+
+    const newTxn = {
+      id: txnId,
+      groupId: group.id,
+      groupName: group.name,
+      amount: numericAmount,
+      department: department.trim(),
+      role: role,
+      remarks: cleanRemarks,
+      payerName: payerName ? payerName.trim() : 'Anonymous Contributor',
+      payerEmail: payerEmail.trim(),
+      payerPhone: payerPhone ? payerPhone.trim() : '',
+      note: noteContent,
+      status: 'completed',
+      paymentMethod: 'Cash (Collector Received)',
+      pairId: group.pairId || 1,
+      pairLabel: 'Cash Payment',
+      targetUpiId: null,
+      razorpayOrderId: null,
+      razorpayPaymentId: 'CASH-' + Date.now().toString(36).toUpperCase(),
+      emailSent: false,
+      emailSentAt: null,
+      emailError: null,
+      createdAt: new Date().toISOString(),
+      completedAt: new Date().toISOString()
+    };
+
+    // Send confirmation email receipt directly to the contributor
+    const emailResult = await emailService.sendConfirmationEmail(newTxn);
+    newTxn.emailSent = emailResult.success;
+    newTxn.emailSentAt = emailResult.success ? new Date().toISOString() : null;
+    newTxn.emailError = emailResult.error || null;
+
+    // Save to local database and sync to Supabase
+    store.saveTransaction(newTxn);
+
+    res.json({
+      success: true,
+      message: `Cash contribution of ₹${numericAmount} successfully accepted, recorded, and receipt emailed!`,
+      transaction: newTxn,
+      emailResult
+    });
+  } catch (err) {
+    console.error('Error recording cash payment:', err);
+    res.status(500).json({ success: false, message: 'Failed to record cash payment: ' + err.message });
   }
 });
 

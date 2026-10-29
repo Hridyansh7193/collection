@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS payments (
   payer_email TEXT NOT NULL,
   payer_phone TEXT,
   note TEXT,
+  remarks TEXT,
   status TEXT NOT NULL DEFAULT 'pending',
   payment_method TEXT,
   razorpay_payment_id TEXT,
@@ -23,6 +24,9 @@ CREATE TABLE IF NOT EXISTS payments (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   completed_at TIMESTAMPTZ
 );
+
+-- Ensure remarks column exists on existing tables
+ALTER TABLE payments ADD COLUMN IF NOT EXISTS remarks TEXT;
 
 -- Fast Indexing for group tracking and status searches
 CREATE INDEX IF NOT EXISTS idx_payments_group ON payments(group_id);
