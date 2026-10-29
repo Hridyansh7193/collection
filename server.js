@@ -7,6 +7,7 @@ const { GROUPS, getGroup, validateGroupPassword, getSafeGroupsList } = require('
 const store = require('./store');
 const emailService = require('./emailService');
 const paymentService = require('./paymentService');
+const supabaseClient = require('./supabaseClient');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -366,7 +367,41 @@ app.get('/api/admin/sync-google-sheet', async (req, res) => {
   try {
     const googleSheetService = require('./googleSheetService');
     const db = store.readDb();
-    const result = await googleSheetService.syncAllCompletedToSheet(db.transactions || []);
+    const txnsMap = new Map();
+
+    // 1. Add local transactions
+    (db.transactions || []).filter(t => t.status === 'completed').forEach(t => txnsMap.set(t.id, t));
+
+    // 2. Add/merge Supabase cloud records (especially useful on Vercel serverless)
+    try {
+      const spRows = await supabaseClient.fetchSupabasePayments({ status: 'completed' });
+      if (spRows && spRows.length > 0) {
+        for (const row of spRows) {
+          if (!txnsMap.has(row.id)) {
+            txnsMap.set(row.id, {
+              id: row.id,
+              groupId: row.group_id,
+              groupName: row.group_name,
+              amount: row.amount,
+              department: (row.note || '').split(' - ')[0] || '',
+              role: (row.note || '').split(' | ')[0] || '',
+              remarks: row.remarks || '',
+              payerName: row.payer_name,
+              payerEmail: row.payer_email,
+              payerPhone: row.payer_phone,
+              paymentMethod: row.payment_method,
+              status: row.status,
+              completedAt: row.completed_at || row.created_at
+            });
+          }
+        }
+      }
+    } catch (spErr) {
+      console.warn('[SyncSheet] Notice fetching Supabase records for backfill:', spErr.message);
+    }
+
+    const allCompleted = Array.from(txnsMap.values());
+    const result = await googleSheetService.syncAllCompletedToSheet(allCompleted);
     res.json(result);
   } catch (err) {
     console.error('Error syncing to Google Sheet:', err);

@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-const DEFAULT_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbwHdzEnaihOFeTXXJS3bNhtY7CO4fvhXLLZ_cPOWUC_QMQyDogqkEd5HO6fiQAPtF9H/exec';
+const DEFAULT_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbx6_TdtZoi-R80LxT_hiTjP1KZ2GA_GG5a-35XqOCuh5MMyjs0Y4iZ4YpqlyjoMw58u/exec';
 
 function getWebhookUrl() {
   const url = process.env.GOOGLE_SHEET_WEBHOOK_URL || DEFAULT_WEBHOOK_URL;
@@ -26,6 +26,7 @@ async function appendPaymentToGoogleSheet(txn) {
       }),
       id: txn.id,
       group: `Group ${txn.groupId}`,
+      groupId: txn.groupId || '',
       department: txn.department || 'N/A',
       role: txn.role || txn.note || 'Contributor',
       amount: parseFloat(txn.amount) || 0,
