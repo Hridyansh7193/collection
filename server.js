@@ -361,6 +361,19 @@ app.post('/api/collection/verify-razorpay', async (req, res) => {
   }
 });
 
+// 7. Manual Sync / Backfill all Completed Payments to Google Sheet
+app.get('/api/admin/sync-google-sheet', async (req, res) => {
+  try {
+    const googleSheetService = require('./googleSheetService');
+    const db = store.readDb();
+    const result = await googleSheetService.syncAllCompletedToSheet(db.transactions || []);
+    res.json(result);
+  } catch (err) {
+    console.error('Error syncing to Google Sheet:', err);
+    res.status(500).json({ success: false, message: 'Sync error: ' + err.message });
+  }
+});
+
 // Fallback route to serve frontend on all web requests
 app.get('*', (req, res, next) => {
   if (req.path.startsWith('/api')) return next();

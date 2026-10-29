@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const supabaseClient = require('./supabaseClient');
+const googleSheetService = require('./googleSheetService');
 
 // On Vercel / serverless environments, only /tmp is writable
 const isServerless = !!(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
@@ -65,6 +66,13 @@ function saveTransaction(txn) {
   supabaseClient.syncToSupabase(txn).catch(err => {
     console.warn('[Store] Supabase background sync notice:', err.message);
   });
+
+  // Asynchronously append to Google Sheet in real-time if payment is completed
+  if (txn.status === 'completed') {
+    googleSheetService.appendPaymentToGoogleSheet(txn).catch(err => {
+      console.warn('[Store] Google Sheet sync notice:', err.message);
+    });
+  }
 
   return txn;
 }
