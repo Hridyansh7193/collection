@@ -52,7 +52,7 @@ function writeDb(data) {
   }
 }
 
-function saveTransaction(txn) {
+async function saveTransaction(txn) {
   const db = readDb();
   const index = db.transactions.findIndex(t => t.id === txn.id);
   if (index >= 0) {
@@ -62,24 +62,72 @@ function saveTransaction(txn) {
   }
   writeDb(db);
 
-  // Asynchronously sync to Supabase Cloud PostgreSQL
-  supabaseClient.syncToSupabase(txn).catch(err => {
-    console.warn('[Store] Supabase background sync notice:', err.message);
-  });
+  // Sync to Cloud Destinations and await completion (critical for Vercel serverless)
+  const syncTasks = [];
 
-  // Asynchronously append to Google Sheet in real-time if payment is completed
+  // 1. Supabase Cloud Sync
+  syncTasks.push(
+    supabaseClient.syncToSupabase(txn).catch(err => {
+      console.warn('[Store] Supabase sync error:', err.message);
+      return { success: false, error: err.message };
+    })
+  );
+
+  // 2. Google Sheet Sync (when transaction is completed)
   if (txn.status === 'completed') {
-    googleSheetService.appendPaymentToGoogleSheet(txn).catch(err => {
-      console.warn('[Store] Google Sheet sync notice:', err.message);
-    });
+    syncTasks.push(
+      googleSheetService.appendPaymentToGoogleSheet(txn).catch(err => {
+        console.warn('[Store] Google Sheet sync error:', err.message);
+        return { success: false, error: err.message };
+      })
+    );
   }
+
+  // Await all cloud sync tasks before returning
+  await Promise.allSettled(syncTasks);
 
   return txn;
 }
 
-function getTransaction(id) {
+async function getTransaction(id) {
   const db = readDb();
-  return db.transactions.find(t => t.id === id) || inMemoryTransactions.find(t => t.id === id) || null;
+  let txn = db.transactions.find(t => t.id === id) || inMemoryTransactions.find(t => t.id === id) || null;
+  if (txn) return txn;
+
+  // Serverless fallback: Query Supabase directly if container was recycled
+  try {
+    const supabase = supabaseClient.getSupabaseClient();
+    if (supabase) {
+      const { data, error } = await supabase.from('payments').select('*').eq('id', id).maybeSingle();
+      if (data && !error) {
+        return {
+          id: data.id,
+          groupId: data.group_id,
+          groupName: data.group_name,
+          pairId: data.pair_id,
+          targetUpiId: data.target_upi_id,
+          amount: parseFloat(data.amount) || 0,
+          payerName: data.payer_name,
+          payerEmail: data.payer_email,
+          payerPhone: data.payer_phone,
+          note: data.note,
+          remarks: data.remarks || '',
+          status: data.status,
+          paymentMethod: data.payment_method,
+          razorpayPaymentId: data.razorpay_payment_id,
+          emailSent: !!data.email_sent,
+          emailSentAt: data.email_sent_at,
+          emailError: data.email_error,
+          createdAt: data.created_at,
+          completedAt: data.completed_at
+        };
+      }
+    }
+  } catch (err) {
+    console.warn('[Store] Supabase fallback getTransaction notice:', err.message);
+  }
+
+  return null;
 }
 
 function getTransactionsByGroup(groupId) {

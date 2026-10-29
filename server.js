@@ -151,8 +151,8 @@ app.post('/api/collection/create-qr', async (req, res) => {
       completedAt: null
     };
 
-    // Stored strictly in internal database
-    store.saveTransaction(newTxn);
+    // Stored strictly in internal database and synced to cloud
+    await store.saveTransaction(newTxn);
 
     res.json({
       success: true,
@@ -253,8 +253,8 @@ app.post('/api/collection/record-cash', async (req, res) => {
     newTxn.emailSentAt = emailResult.success ? new Date().toISOString() : null;
     newTxn.emailError = emailResult.error || null;
 
-    // Save to local database and sync to Supabase
-    store.saveTransaction(newTxn);
+    // Save to database, sync to Supabase, and sync to Google Sheet
+    await store.saveTransaction(newTxn);
 
     res.json({
       success: true,
@@ -269,8 +269,8 @@ app.post('/api/collection/record-cash', async (req, res) => {
 });
 
 // 4. Check Transaction Status
-app.get('/api/collection/status/:txnId', (req, res) => {
-  const txn = store.getTransaction(req.params.txnId);
+app.get('/api/collection/status/:txnId', async (req, res) => {
+  const txn = await store.getTransaction(req.params.txnId);
   if (!txn) {
     return res.status(404).json({ success: false, message: 'Transaction not found.' });
   }
@@ -281,7 +281,7 @@ app.get('/api/collection/status/:txnId', (req, res) => {
 app.post('/api/collection/confirm-payment', async (req, res) => {
   try {
     const { txnId, paymentId, paymentMethod } = req.body;
-    const txn = store.getTransaction(txnId);
+    const txn = await store.getTransaction(txnId);
 
     if (!txn) {
       return res.status(404).json({ success: false, message: 'Transaction not found.' });
@@ -302,8 +302,8 @@ app.post('/api/collection/confirm-payment', async (req, res) => {
     txn.emailSentAt = emailResult.success ? new Date().toISOString() : null;
     txn.emailError = emailResult.error || null;
 
-    // Save strictly to local database
-    store.saveTransaction(txn);
+    // Save to database, sync to Supabase, and sync to Google Sheet
+    await store.saveTransaction(txn);
 
     res.json({
       success: true,
@@ -321,7 +321,7 @@ app.post('/api/collection/confirm-payment', async (req, res) => {
 app.post('/api/collection/verify-razorpay', async (req, res) => {
   try {
     const { txnId, razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
-    const txn = store.getTransaction(txnId);
+    const txn = await store.getTransaction(txnId);
 
     if (!txn) {
       return res.status(404).json({ success: false, message: 'Transaction not found.' });
@@ -347,7 +347,7 @@ app.post('/api/collection/verify-razorpay', async (req, res) => {
     txn.emailSentAt = emailResult.success ? new Date().toISOString() : null;
     txn.emailError = emailResult.error || null;
 
-    store.saveTransaction(txn);
+    await store.saveTransaction(txn);
 
     res.json({
       success: true,
