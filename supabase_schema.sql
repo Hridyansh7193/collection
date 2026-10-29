@@ -33,11 +33,43 @@ CREATE INDEX IF NOT EXISTS idx_payments_group ON payments(group_id);
 CREATE INDEX IF NOT EXISTS idx_payments_status ON payments(status);
 CREATE INDEX IF NOT EXISTS idx_payments_created ON payments(created_at DESC);
 
--- Enable full read/write access for collection transactions
-ALTER TABLE payments DISABLE ROW LEVEL SECURITY;
+-- ========================================================
+-- Fix 1: Enable Row Level Security (RLS) with explicit policies
+-- ========================================================
+ALTER TABLE payments ENABLE ROW LEVEL SECURITY;
 
--- View for group-by-group summary
-CREATE OR REPLACE VIEW group_collection_summary AS
+-- Drop old policies if any
+DROP POLICY IF EXISTS "Allow anon insert payments" ON payments;
+DROP POLICY IF EXISTS "Allow anon select payments" ON payments;
+DROP POLICY IF EXISTS "Allow anon update payments" ON payments;
+
+-- Allow inserting contributions from the portal
+CREATE POLICY "Allow anon insert payments" 
+ON payments 
+FOR INSERT 
+WITH CHECK (true);
+
+-- Allow querying payments
+CREATE POLICY "Allow anon select payments" 
+ON payments 
+FOR SELECT 
+USING (true);
+
+-- Allow updating confirmation & email status
+CREATE POLICY "Allow anon update payments" 
+ON payments 
+FOR UPDATE 
+USING (true)
+WITH CHECK (true);
+
+-- ========================================================
+-- Fix 2: Group Summary View with security_invoker = true
+-- (Fixes Supabase "Security Definer View" warning)
+-- ========================================================
+DROP VIEW IF EXISTS group_collection_summary;
+
+CREATE VIEW group_collection_summary 
+WITH (security_invoker = true) AS
 SELECT 
   group_id,
   group_name,
