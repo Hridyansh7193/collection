@@ -85,7 +85,7 @@
             </label>
             <div class="amount-input-wrapper">
               <span class="currency-symbol">₹</span>
-              <input type="number" id="input-amount" class="amount-input" placeholder="2000" min="1500" step="any"
+              <input type="number" id="input-amount" class="amount-input" placeholder="2000" min="1" step="any"
                 required />
             </div>
             <!-- Quick Denomination Pills -->
@@ -190,6 +190,9 @@
                   <optgroup label="Residents (Minimum ₹1,500)">
                     <option value="Senior Resident">Senior Resident (Min ₹1,500)</option>
                     <option value="Junior Resident">Junior Resident (Min ₹1,500)</option>
+                  </optgroup>
+                  <optgroup label="Others (No Minimum)">
+                    <option value="Others">Others (No Minimum)</option>
                   </optgroup>
                 </select>
               </div>

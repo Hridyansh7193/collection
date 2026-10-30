@@ -544,6 +544,14 @@ select.form-input option {
   box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
 }
 
+.role-tier-badge.other,
+.role-tier-badge.others {
+  background: rgba(59, 130, 246, 0.16);
+  color: #93c5fd;
+  border: 1px solid rgba(59, 130, 246, 0.35);
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.15);
+}
+
 .amount-input.shake-warning {
   animation: inputShake 0.4s ease;
   border-color: #f43f5e !important;

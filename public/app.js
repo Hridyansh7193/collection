@@ -36,14 +36,15 @@
   const btnGenerateQr = document.getElementById('btn-generate-qr');
   const btnPayCash = document.getElementById('btn-pay-cash');
 
-  // Role Minimum Deposit Configuration (Faculty ₹2,000 min, Residents ₹1,500 min)
+  // Role Minimum Deposit Configuration (Faculty ₹2,000 min, Residents ₹1,500 min, Others no minimum)
   const ROLE_TIERS = {
     'HOD': { type: 'faculty', min: 2000, label: 'Faculty Tier' },
     'Professor': { type: 'faculty', min: 2000, label: 'Faculty Tier' },
     'Associate Professor': { type: 'faculty', min: 2000, label: 'Faculty Tier' },
     'Additional Professor': { type: 'faculty', min: 2000, label: 'Faculty Tier' },
     'Senior Resident': { type: 'resident', min: 1500, label: 'Resident Tier' },
-    'Junior Resident': { type: 'resident', min: 1500, label: 'Resident Tier' }
+    'Junior Resident': { type: 'resident', min: 1500, label: 'Resident Tier' },
+    'Others': { type: 'others', min: 0, label: 'Others (No Minimum)' }
   };
 
   // Terminal States
@@ -232,7 +233,7 @@
 
     const selectedRole = selectRole ? selectRole.value : '';
     if (!selectedRole || !ROLE_TIERS[selectedRole]) {
-      showToast('Please select a Designation / Role (Faculty or Resident)', 'warning');
+      showToast('Please select a Designation / Role from the dropdown', 'warning');
       if (selectRole) selectRole.focus();
       return;
     }
@@ -240,12 +241,18 @@
     const tier = ROLE_TIERS[selectedRole];
     let amount = parseFloat(inputAmount.value);
 
-    if (isNaN(amount) || amount < tier.min) {
-      amount = tier.min;
-      inputAmount.value = tier.min;
-      inputAmount.classList.add('shake-warning');
-      setTimeout(() => inputAmount.classList.remove('shake-warning'), 500);
-      showToast(`Minimum deposit for ${selectedRole} is ₹${tier.min.toLocaleString('en-IN')}. Amount cannot be lowered.`, 'warning');
+    if (isNaN(amount) || amount <= 0 || (tier.min > 0 && amount < tier.min)) {
+      if (tier.min > 0) {
+        amount = tier.min;
+        inputAmount.value = tier.min;
+        inputAmount.classList.add('shake-warning');
+        setTimeout(() => inputAmount.classList.remove('shake-warning'), 500);
+        showToast(`Minimum deposit for ${selectedRole} is ₹${tier.min.toLocaleString('en-IN')}. Amount cannot be lowered.`, 'warning');
+      } else {
+        inputAmount.classList.add('shake-warning');
+        setTimeout(() => inputAmount.classList.remove('shake-warning'), 500);
+        showToast('Please enter a valid contribution amount greater than ₹0.', 'warning');
+      }
       inputAmount.focus();
       return;
     }
@@ -393,7 +400,7 @@
 
       const selectedRole = selectRole ? selectRole.value : '';
       if (!selectedRole || !ROLE_TIERS[selectedRole]) {
-        showToast('Please select a Designation / Role (Faculty or Resident)', 'warning');
+        showToast('Please select a Designation / Role from the dropdown', 'warning');
         if (selectRole) selectRole.focus();
         return;
       }
@@ -401,12 +408,18 @@
       const tier = ROLE_TIERS[selectedRole];
       let amount = parseFloat(inputAmount.value);
 
-      if (isNaN(amount) || amount < tier.min) {
-        amount = tier.min;
-        inputAmount.value = tier.min;
-        inputAmount.classList.add('shake-warning');
-        setTimeout(() => inputAmount.classList.remove('shake-warning'), 500);
-        showToast(`Minimum deposit for ${selectedRole} is ₹${tier.min.toLocaleString('en-IN')}. Amount cannot be lowered.`, 'warning');
+      if (isNaN(amount) || amount <= 0 || (tier.min > 0 && amount < tier.min)) {
+        if (tier.min > 0) {
+          amount = tier.min;
+          inputAmount.value = tier.min;
+          inputAmount.classList.add('shake-warning');
+          setTimeout(() => inputAmount.classList.remove('shake-warning'), 500);
+          showToast(`Minimum deposit for ${selectedRole} is ₹${tier.min.toLocaleString('en-IN')}. Amount cannot be lowered.`, 'warning');
+        } else {
+          inputAmount.classList.add('shake-warning');
+          setTimeout(() => inputAmount.classList.remove('shake-warning'), 500);
+          showToast('Please enter a valid contribution amount greater than ₹0.', 'warning');
+        }
         inputAmount.focus();
         return;
       }
@@ -723,19 +736,23 @@
       const tier = ROLE_TIERS[selected];
       if (!tier) return;
 
-      inputAmount.min = tier.min;
+      inputAmount.min = tier.min > 0 ? tier.min : 1;
       if (roleMinIndicator) {
-        roleMinIndicator.textContent = `(Min: ₹${tier.min.toLocaleString('en-IN')})`;
+        roleMinIndicator.textContent = tier.min > 0 
+          ? `(Min: ₹${tier.min.toLocaleString('en-IN')})` 
+          : `(No Minimum)`;
       }
 
       if (roleMinBadge && roleMinBadgeText) {
         roleMinBadge.style.display = 'inline-flex';
         roleMinBadge.className = `role-tier-badge ${tier.type}`;
-        roleMinBadgeText.textContent = `🛡️ Minimum for ${selected}: ₹${tier.min.toLocaleString('en-IN')} (Can be increased, not lowered)`;
+        roleMinBadgeText.textContent = tier.min > 0
+          ? `🛡️ Minimum for ${selected}: ₹${tier.min.toLocaleString('en-IN')} (Can be increased, not lowered)`
+          : `✨ Designation: ${selected} (No Minimum Deposit)`;
       }
 
       const currentVal = parseFloat(inputAmount.value) || 0;
-      if (currentVal < tier.min) {
+      if (tier.min > 0 && currentVal < tier.min) {
         inputAmount.value = tier.min;
         showToast(`Minimum deposit for ${selected} set to ₹${tier.min.toLocaleString('en-IN')}`, 'info');
       }
@@ -747,7 +764,7 @@
     const enforceMinimum = () => {
       const selected = selectRole ? selectRole.value : '';
       const tier = ROLE_TIERS[selected];
-      if (!tier) return;
+      if (!tier || !tier.min) return;
 
       const currentVal = parseFloat(inputAmount.value);
       if (isNaN(currentVal) || currentVal < tier.min) {
@@ -767,10 +784,10 @@
     pill.addEventListener('click', () => {
       const addVal = parseFloat(pill.dataset.val) || 0;
       const selected = selectRole ? selectRole.value : '';
-      const tierMin = (ROLE_TIERS[selected] && ROLE_TIERS[selected].min) || 1500;
+      const tierMin = (ROLE_TIERS[selected] && ROLE_TIERS[selected].min) || 0;
       let currentVal = parseFloat(inputAmount.value);
-      if (isNaN(currentVal) || currentVal < tierMin) {
-        currentVal = tierMin;
+      if (isNaN(currentVal) || currentVal < 0 || (tierMin > 0 && currentVal < tierMin)) {
+        currentVal = tierMin > 0 ? tierMin : 0;
       }
       const newVal = currentVal + addVal;
       inputAmount.value = newVal;

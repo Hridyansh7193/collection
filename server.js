@@ -65,7 +65,8 @@ const ROLE_MINIMUMS = {
   'Associate Professor': 2000,
   'Additional Professor': 2000,
   'Senior Resident': 1500,
-  'Junior Resident': 1500
+  'Junior Resident': 1500,
+  'Others': 0
 };
 
 // 3. Create QR Code for Contribution
@@ -90,19 +91,21 @@ app.post('/api/collection/create-qr', async (req, res) => {
       return res.status(400).json({ success: false, message: 'Please select a Medical Department from the dropdown.' });
     }
 
-    if (!role || !ROLE_MINIMUMS[role]) {
+    if (!role || ROLE_MINIMUMS[role] === undefined) {
       return res.status(400).json({ 
         success: false, 
-        message: 'Please select a valid Designation / Role (HOD, Professor, Associate Professor, Additional Professor, Senior Resident, or Junior Resident).' 
+        message: 'Please select a valid Designation / Role (HOD, Professor, Associate Professor, Additional Professor, Senior Resident, Junior Resident, or Others).' 
       });
     }
 
     const minAllowed = ROLE_MINIMUMS[role];
     const numericAmount = parseFloat(amount);
-    if (isNaN(numericAmount) || numericAmount < minAllowed) {
+    if (isNaN(numericAmount) || numericAmount <= 0 || (minAllowed > 0 && numericAmount < minAllowed)) {
       return res.status(400).json({ 
         success: false, 
-        message: `Minimum deposit value for ${role} is ₹${minAllowed.toLocaleString('en-IN')}. The amount can be increased but not lowered.` 
+        message: minAllowed > 0
+          ? `Minimum deposit value for ${role} is ₹${minAllowed.toLocaleString('en-IN')}. The amount can be increased but not lowered.` 
+          : 'Please enter a valid contribution amount greater than ₹0.'
       });
     }
 
@@ -196,19 +199,21 @@ app.post('/api/collection/record-cash', async (req, res) => {
       return res.status(400).json({ success: false, message: 'Please select a Medical Department from the dropdown.' });
     }
 
-    if (!role || !ROLE_MINIMUMS[role]) {
+    if (!role || ROLE_MINIMUMS[role] === undefined) {
       return res.status(400).json({ 
         success: false, 
-        message: 'Please select a valid Designation / Role (HOD, Professor, Associate Professor, Additional Professor, Senior Resident, or Junior Resident).' 
+        message: 'Please select a valid Designation / Role (HOD, Professor, Associate Professor, Additional Professor, Senior Resident, Junior Resident, or Others).' 
       });
     }
 
     const minAllowed = ROLE_MINIMUMS[role];
     const numericAmount = parseFloat(amount);
-    if (isNaN(numericAmount) || numericAmount < minAllowed) {
+    if (isNaN(numericAmount) || numericAmount <= 0 || (minAllowed > 0 && numericAmount < minAllowed)) {
       return res.status(400).json({ 
         success: false, 
-        message: `Minimum deposit value for ${role} is ₹${minAllowed.toLocaleString('en-IN')}. The amount can be increased but not lowered.` 
+        message: minAllowed > 0
+          ? `Minimum deposit value for ${role} is ₹${minAllowed.toLocaleString('en-IN')}. The amount can be increased but not lowered.` 
+          : 'Please enter a valid contribution amount greater than ₹0.'
       });
     }
 
